@@ -56,7 +56,7 @@
             'stateSave': true,
             'responsive': true,
             'ajax': {
-                'url': '{{ route('models.show') }}', // Adjust the route for your models' server-side processing
+                'url': '{{ route('models.show') }}', 
             },
             columns: [
                 {
@@ -68,7 +68,7 @@
                     name: 'name'
                 },
                 {
-                    data: 'brand_name', // this is the name of the brand
+                    data: 'brand_name', 
                     name: 'brand_name'
                 },
                 {
@@ -121,11 +121,11 @@
                         success: function(result) {
                             swalWithBootstrapButtons.fire({
                                 title: "Success!",
-                                text: "Model and associated items deleted successfully.",
+                                text: "Model deleted successfully.",
                                 icon: "success",
-                                timer: 2000
+                                timer: 3000
                             });
-                            window.location.reload();
+                            table.ajax.reload();
                         },
                         error: function(jqXHR, exception) {
                             toastr.error('Failed to delete data');

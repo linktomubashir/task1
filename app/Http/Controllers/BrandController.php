@@ -43,13 +43,12 @@ class BrandController extends Controller
     {
         // Validate the input
     $request->validate([
-        'name' => 'required|string|max:255', // Assuming 'name' is required
+        'name' => 'required|string|max:255',
     ]);
 
-    // Create a new brand
-    $brand = new Brand();
-    $brand->name = $request->name;
-    $brand->save();
+    Brand::create([
+        'name' => $request->name,
+    ]);
 
     return redirect()->route('brands.index')->with('success', 'Brand created successfully.');
 
@@ -75,7 +74,6 @@ class BrandController extends Controller
         ->filterColumn('name', function ($query, $keyword) {
             $query->where('name', 'like', "%$keyword%");
         })
-        // Adding 'items' column (with count)
         ->addColumn('items', function ($row) {
             return $row->items->count();  // Counting the related items
         })
@@ -128,18 +126,15 @@ class BrandController extends Controller
      */
     public function update(Request $request, string $id)
     {
-         // Validate the input
+       
          $request->validate([
-            'name' => 'required|string|max:255', // Assuming 'name' is required
+            'name' => 'required|string|max:255', 
         ]);
-
-        // Find the brand by its ID
         $brand = Brand::findOrFail($id);
 
-        // Update the brand details
-        $brand->name = $request->name;
-        $brand->save();
-
+        $brand->update([
+            'name' => $request->name,
+        ]);
         return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
 

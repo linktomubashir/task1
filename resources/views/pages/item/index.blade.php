@@ -137,7 +137,7 @@
                                 icon: "success",
                                 timer: 2000
                             });
-                            window.location.reload();
+                            table.ajax.reload();
                         },
                         error: function(jqXHR, exception) {
                             toastr.error('Failed to update data');

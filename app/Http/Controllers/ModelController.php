@@ -46,17 +46,15 @@ class ModelController extends Controller
     {
          // Validate the input
     $request->validate([
-        'name' => 'required|string|max:255',  // Ensure name is provided
-        'brand_id' => 'required|exists:brands,id',  // Ensure a valid brand ID is selected
+        'name' => 'required|string|max:255',  
+        'brand_id' => 'required|exists:brands,id',
     ]);
 
-    // Create a new model
-    $model = new Models; 
-    $model->name = $request->input('name');  // Set the name from the form
-    $model->brand_id = $request->input('brand_id');  // Set the brand_id from the form
-    $model->save();  // Save the model
+    Models::create([
+        'name' => $request->input('name'),
+        'brand_id' => $request->input('brand_id'),
+    ]);
 
-    // Redirect to the appropriate page with a success message
     return redirect()->route('models.index')->with('success', 'Model created successfully.');
 }
 
@@ -71,21 +69,17 @@ class ModelController extends Controller
            ->addColumn('id', function ($row) {
                return $row->id;
            })
-           // Adding 'name' column
            ->addColumn('name', function ($row) {
                return $row->name;
            })
-           // Sorting for 'name' column
            ->orderColumn('name', function ($query, $order) {
                $query->orderBy('name', $order)->orderBy('id', $order);
            })
-           // Filtering for 'name' column
            ->filterColumn('name', function ($query, $keyword) {
                $query->where('name', 'like', "%$keyword%");
            })
-           // Adding 'brand_name' column,the model has a `brand` relationship
            ->addColumn('brand_name', function ($row) {
-               return $row->brand->name;  //'brand' is a relationship method on the Model
+               return $row->brand->name;  
            })
            ->filterColumn('brand_name', function ($query, $keyword) {
             $query->whereHas('brand', function($q) use ($keyword) {
@@ -93,13 +87,11 @@ class ModelController extends Controller
             });
         })
            ->addColumn('items', function ($row) {
-               return $row->items->count();  // Example static value for 'items'
+               return $row->items->count();  
            })
            ->orderColumn('items', function ($query, $order) {
-            // Add sorting logic based on the number of related items
-            $query->withCount('items')->orderBy('items_count', $order);  // Sort based on the count of related items
+            $query->withCount('items')->orderBy('items_count', $order);  
         })
-           // Adding 'actions' column with edit and delete buttons
            ->addColumn('actions', function ($row) {
                return '
                    <a href="#" title="Edit Model" data-url="' . route('models.edit', [$row->id]) . '" data-size="small" data-ajax-popup="true"
@@ -112,9 +104,7 @@ class ModelController extends Controller
                    </a>
                ';
            })
-           // Mark 'actions' column as raw for HTML content
            ->rawColumns(['actions'])
-           // Return the JSON response
            ->toJson();
     }
 
@@ -124,15 +114,13 @@ class ModelController extends Controller
      */
     public function edit(string $id)
     {
-        // Find the model by ID, if not found return to the model list with an error message
         $model = Models::findOrFail($id);
-        // Get all brands to populate the select dropdown for the brand
         $brands = Brand::all();
         $data = [
             'action' => route('models.update', $model->id),  // URL for the update action
             'row' => $model,
             'brands' => $brands,
-            'method' => 'PUT',  // Use PUT method for update
+            'method' => 'PUT',  
         ];
         return view('pages.models.form')->with($data);
     }
@@ -147,17 +135,12 @@ class ModelController extends Controller
             'brand_id' => 'required|exists:brands,id', 
         ]);
     
-        // Find the model by ID
         $model = Models::findOrFail($id);
         
-        // Update the model's attributes with the request data
-        $model->name = $request->input('name');
-        $model->brand_id = $request->input('brand_id');
-        
-        // Save the updated model
-        $model->save();
-    
-        // Redirect to the models index page with a success message
+        $model->update([
+            'name' => $request->input('name'),
+            'brand_id' => $request->input('brand_id'),
+        ]);
         return redirect()->route('models.index')->with('success', 'Model updated successfully.');
     }
     /**
@@ -166,9 +149,7 @@ class ModelController extends Controller
     public function destroy(string $id)
     {
         $model = Models::findOrFail($id);
-        // Delete the model
         $model->delete();
-        // Redirect back to the models list with a success message
         return redirect()->route('models.index')->with('success', 'Model deleted successfully.');
     }
 }

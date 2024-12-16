@@ -45,22 +45,17 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'brand_id' => 'required|exists:brands,id', // Ensure brand exists
         ]);
-
-        // Store the data in the database
-        $item = new Item;
-        $item->name = $request->name;
-        $item->amount = $request->amount;
-        $item->brand_id = $request->brand_id;
-        $item->model_id = $request->model_id;
-        $item->save();
-
-        // Redirect to a different page after storing or return with a success message
+        Item::create([
+            'name' => $request->name,
+            'amount' => $request->amount,
+            'brand_id' => $request->brand_id,
+            'model_id' => $request->model_id,
+        ]);
         return redirect()->route('item.index')->with('success', 'Item created successfully!');
     }
 
@@ -123,15 +118,13 @@ class ItemController extends Controller
      */
     public function edit(string $id)
     {
-        // Find the model by ID, if not found return to the model list with an error message
         $item = Item::findOrFail($id);
-        // Get all brands to populate the select dropdown for the brand
         $brands = Brand::all();
         $data = [
-            'action' => route('item.update', $item->id), // URL for the update action
+            'action' => route('item.update', $item->id), 
             'row' => $item,
             'brands' => $brands,
-            'method' => 'PUT', // Use PUT method for update
+            'method' => 'PUT',
         ];
         return view('pages.item.form')->with($data);
     }
@@ -144,21 +137,19 @@ class ItemController extends Controller
         // Find the item by ID
         $item = Item::findOrFail($id);
 
-        // Validate the incoming request data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'brand_id' => 'required|exists:brands,id', // Ensure brand exists
+            'brand_id' => 'required|exists:brands,id', 
         ]);
 
-        // Update the item with the validated data
-        $item->name = $request->name;
-        $item->amount = $request->amount;
-        $item->brand_id = $request->brand_id;
-        $item->model_id = $request->model_id;
-        $item->save();
+        $item->update([
+            'name' => $request->name,
+            'amount' => $request->amount,
+            'brand_id' => $request->brand_id,
+            'model_id' => $request->model_id,
+        ]);
 
-        // Redirect with success message
         return redirect()->route('item.index')->with('success', 'Item updated successfully!');
     }
 
@@ -169,16 +160,12 @@ class ItemController extends Controller
     {
         $item = Item::findOrFail($id);
         $item->delete();
-
-        // Redirect with success message
         return redirect()->route('item.index')->with('success', 'Item deleted successfully!');
     }
     public function searchModel(Request $request)
     {
         if (!empty($request->brand_id)) {
             $brandId = $request->input('brand_id');
-
-            // Fetch models associated with the brand
             $models = Models::where('brand_id', $brandId)->get(); // Adjust query based on your database structure
         
             return response()->json(['models' => $models]);

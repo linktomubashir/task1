@@ -61,7 +61,7 @@
                 'stateSave': true,
                 'responsive': true,
                 'ajax': {
-                    'url': '{{ route('brands.show') }}',  // Fetch the brand data from server
+                    'url': '{{ route('brands.show') }}',  
                     
                 },
                 columns: [
@@ -120,8 +120,7 @@
                                 icon: "success",
                                 timer: 2000
                             });
-                            // Reload the table after deletion
-                            location.reload();
+                          table.ajax.reload();
                         },
                         error: function(jqXHR, exception) {
                             toastr.error('Failed to delete brand');
