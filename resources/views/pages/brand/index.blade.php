@@ -14,11 +14,17 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <p class="mb-0">Brand Management</p>
 
-                    <a class="btn btn-sm btn-primary ms-auto" title="Creat brand" data-url="{{ route('brands.create') }}"
-                        data-size="small" data-ajax-popup="true" data-title="{{ __('Create New Brand') }}"
-                        data-bs-toggle="tooltip">
-                        Add New
-                    </a>
+                    <div class="d-flex align-items-end ms-auto">
+                        <div class="form-check form-switch me-3">
+                            <label class="form-check-label" for="showTrashed">Show Trashed items</label>
+                            <input class="form-check-input" type="checkbox" id="showTrashed" />
+                        </div>
+                        <a class="btn btn-sm btn-primary" title="Create brand" data-url="{{ route('brands.create') }}"
+                            data-size="small" data-ajax-popup="true" data-title="{{ __('Create New Brand') }}"
+                            data-bs-toggle="tooltip">
+                            Add New
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <!-- Table for brands -->
@@ -62,7 +68,9 @@
                 'responsive': true,
                 'ajax': {
                     'url': '{{ route('brands.show') }}',
-
+                    'data': function(d) {
+                        d.show_trashed = $('#showTrashed').prop('checked');
+                    },
                 },
                 columns: [{
                         data: 'id',
@@ -84,7 +92,7 @@
                         data: 'actions',
                         name: 'actions',
                         orderable: false,
-                        searchable: false,
+                        searchable: false
                     }
                 ],
                 lengthMenu: [
@@ -96,50 +104,80 @@
                 }
             });
 
+            $('#showTrashed').change(function() {
+                table.draw();
+            });
 
-            // Delete Confirmation with SweetAlert
-            window.Delete = function(brandId) {
-                const swalWithBootstrapButtons = Swal.mixin({
+            window.handleAction = function(brandId, actionType) {
+                let title, text, icon, url, method, successMessage;
+
+                switch (actionType) {
+                    case 'restore':
+                        title = "Are you sure?";
+                        text = "You want to restore this brand!";
+                        icon = "info";
+                        url = '{{ route('brands.restore', '') }}';
+                        method = 'POST';
+                        successMessage = "Brand has been restored.";
+                        break;
+
+                    case 'permanentDelete':
+                        title = "Are you sure?";
+                        text = "This action will permanently delete the brand. You won't be able to revert it!";
+                        icon = "warning";
+                        url = '{{ route('brands.forceDelete', '') }}';
+                        method = 'DELETE';
+                        successMessage = "Brand has been permanently deleted.";
+                        break;
+                    case 'delete':
+
+                        title = "Are you sure?";
+                        text = "This action will move this Brand to trash.";
+                        icon = "warning";
+                        url = '{{ route('brands.destroy', '') }}';
+                        method = 'GET';
+                        successMessage = "Brand has been moved to trash.";
+                        break;
+                }
+
+                swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-success py-2 px-4",
                         cancelButton: "btn btn-danger mx-4 py-2 px-4"
                     },
                     buttonsStyling: false
-                });
-
-                swalWithBootstrapButtons.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
+                }).fire({
+                    title,
+                    text,
+                    icon,
                     showCancelButton: true,
-                    confirmButtonText: "Yes, delete it!",
+                    confirmButtonText: "Yes, proceed!",
                     cancelButtonText: "No, cancel!",
-                    reverseButtons: true,
-                }).then((result) => {
+                    reverseButtons: true
+                }).then(result => {
                     if (result.isConfirmed) {
-                        // AJAX call to delete the brand
                         $.ajax({
-                            url: '{{ route('brands.destroy', '') }}' + '/' + brandId,
-                            method: 'GET',
+                            url: `${url}/${brandId}`,
+                            method: method,
                             data: {
-                                _token: '{{ csrf_token() }}',
+                                _token: '{{ csrf_token() }}'
                             },
-                            success: function(result) {
-                                swalWithBootstrapButtons.fire({
-                                    title: "Deleted!",
-                                    text: "Brand has been deleted.",
+                            success: function() {
+                                swal.fire({
+                                    title: successMessage,
                                     icon: "success",
-                                    timer: 2000
+                                    timer: 2000,
+                                    showConfirmButton: false,
                                 });
                                 table.ajax.reload();
                             },
-                            error: function(jqXHR, exception) {
-                                toastr.error('Failed to delete brand');
+                            error: function() {
+                                toastr.error('Action failed');
                             }
                         });
                     }
                 });
-            }
+            };
         });
     </script>
 @endpush

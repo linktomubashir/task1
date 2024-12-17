@@ -48,14 +48,10 @@ class ItemController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'brand_id' => 'required|exists:brands,id', // Ensure brand exists
+            'brand_id' => 'required|exists:brands,id', 
+            'model_id' => 'required|exists:models,id', 
         ]);
-        Item::create([
-            'name' => $request->name,
-            'amount' => $request->amount,
-            'brand_id' => $request->brand_id,
-            'model_id' => $request->model_id,
-        ]);
+        Item::create($validated);
         return redirect()->route('item.index')->with('success', 'Item created successfully!');
     }
 
@@ -66,6 +62,9 @@ class ItemController extends Controller
     {
 
         $data = Item::query();
+        if ($request->has('show_trashed') && $request->show_trashed == 'true') {
+            $data->onlyTrashed();
+        }
 
         return DataTables::of($data)
             ->addColumn('id', function ($row) {
@@ -99,14 +98,26 @@ class ItemController extends Controller
                 return $row->models->name ?? 'N/A';
             })
             ->addColumn('actions', function ($row) {
-                return '
+                if ($row->trashed()) {
+                    return '
+                        <a href="#" title="Restore" onclick="handleAction(' . $row->id . ',\'restore\')" data-bs-toggle="tooltip">
+                            <i class="fas fa-redo-alt"></i>
+                        </a>
+                        &nbsp;&nbsp;
+                        <a href="#" title="Permanent Delete" onclick="handleAction(' . $row->id . ', \'permanentDelete\')" data-bs-toggle="tooltip">
+                            <i class="fa fa-trash text-danger font-18"></i>
+                        </a>';
+                } else {
+                    return '
                         <a href="#" title="Edit Item" data-url="' . route('item.edit', [$row->id]) . '" data-size="md" data-ajax-popup="true"
-                      data-title="' . __('Edit Item') . '" data-bs-toggle="tooltip">
-                       <i class="fas fa-edit text-info font-18"></i>
-                   </a>
-                        &nbsp;&nbsp
-                        <a href="#" title="Delete" onclick="Delete(' . $row->id . ')" >  <i class="fa fa-trash text-danger font-18"></i></a>
-                    ';
+                        data-title="' . __('Edit Item') . '" data-bs-toggle="tooltip">
+                            <i class="fas fa-edit text-info font-18"></i>
+                        </a>
+                        &nbsp;&nbsp;
+                        <a href="#" title="Delete" onclick="handleAction(' . $row->id . ', \'delete\')" data-bs-toggle="tooltip">
+                            <i class="fa fa-trash text-danger font-18"></i>
+                        </a>';
+                }
             })
             ->rawColumns(['image', 'actions'])
             ->toJson();
@@ -141,14 +152,10 @@ class ItemController extends Controller
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'brand_id' => 'required|exists:brands,id', 
+            'model_id' => 'required|exists:models,id', 
         ]);
 
-        $item->update([
-            'name' => $request->name,
-            'amount' => $request->amount,
-            'brand_id' => $request->brand_id,
-            'model_id' => $request->model_id,
-        ]);
+        $item->update($validated);
 
         return redirect()->route('item.index')->with('success', 'Item updated successfully!');
     }
@@ -162,11 +169,34 @@ class ItemController extends Controller
         $item->delete();
         return redirect()->route('item.index')->with('success', 'Item deleted successfully!');
     }
+
+    public function restore($id)
+    {
+        $item = Item::withTrashed()->find($id);
+        if ($item) {
+            $item->restore();
+            return response()->json(['success' => 'Item restored successfully']);
+        }
+
+        return response()->json(['error' => 'Item not found'], 404);
+    }
+
+    public function forceDelete($id)
+    {
+        $item = Item::withTrashed()->find($id);
+        if ($item) {
+            $item->forceDelete();
+            return response()->json(['message' => 'Item permanently deleted']);
+        }
+
+        return response()->json(['message' => 'Item not found'], 404);
+    }
+
     public function searchModel(Request $request)
     {
         if (!empty($request->brand_id)) {
             $brandId = $request->input('brand_id');
-            $models = Models::where('brand_id', $brandId)->get(); // Adjust query based on your database structure
+            $models = Models::where('brand_id', $brandId)->get(); 
         
             return response()->json(['models' => $models]);
         } else {
