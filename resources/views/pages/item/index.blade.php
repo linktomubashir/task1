@@ -14,9 +14,9 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <p class="mb-0">Item page</p>
 
-                    <a class="btn btn-sm btn-primary ms-auto" title="Creat item"
-                        data-url="{{ route('item.create') }}" data-size="small" data-ajax-popup="true"
-                        data-title="{{ __('Create New Item') }}" data-bs-toggle="tooltip">
+                    <a class="btn btn-sm btn-primary ms-auto" title="Creat item" data-url="{{ route('item.create') }}"
+                        data-size="small" data-ajax-popup="true" data-title="{{ __('Create New Item') }}"
+                        data-bs-toggle="tooltip">
                         Add New
                     </a>
                 </div>
@@ -48,103 +48,102 @@
     <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
 
     <script>
-        var table = $('#item-table').DataTable({
-            'paging': true,
-            'searching': true,
-            'ordering': true,
-            'info': true,
-            'autoWidth': true,
-            'processing': true,
-            'serverSide': true,
-            'stateSave': true,
-            'responsive': true,
-            'ajax': {
-                'url': '{{ route('item.show') }}', // Adjust the route for your blogs' server-side processing
-            },
-            columns: [
-                {
-                    data: 'id', 
-                    name: 'id'
+        $(document).ready(function() {
+            let table = $('#item-table').DataTable({
+                'paging': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                'processing': true,
+                'serverSide': true,
+                'stateSave': true,
+                'responsive': true,
+                'ajax': {
+                    'url': '{{ route('item.show') }}', // Adjust the route for your blogs' server-side processing
                 },
-                {
-                    data: 'name',
-                    name: 'name'
-                }, 
-                {
-                    data: 'amount',
-                    name: 'amount'
-                },
-                {
-                    data: 'brand',
-                    name: 'brand'
-                },
-                {
-                    data: 'model',
-                    name: 'model'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                },
-                {
-                    data: 'actions',
-                    name: 'actions',
-                    orderable: false,
-                    searchable: false,
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount'
+                    },
+                    {
+                        data: 'brand',
+                        name: 'brand'
+                    },
+                    {
+                        data: 'model',
+                        name: 'model'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at',
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                    }
+                ],
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+                drawCallback: function(settings) {
+                    $('[data-toggle="tooltip"]').tooltip();
                 }
-            ],
-            lengthMenu: [
-                [10, 25, 50, 100, -1],
-                [10, 25, 50, 100, "All"]
-            ],
-            drawCallback: function(settings) {
-                $('[data-toggle="tooltip"]').tooltip();
+            });
+            window.Delete = function(rowId) {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success py-2 px-4",
+                        cancelButton: "btn btn-danger mx-4 py-2 px-4"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true,
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX call
+                        $.ajax({
+                            url: '{{ url('/item/destroy') }}' + '/' + rowId,
+                            method: 'get',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function(result) {
+                                swalWithBootstrapButtons.fire({
+                                    title: "Success!",
+                                    text: "Slider Deletd successfully.",
+                                    icon: "success",
+                                    timer: 2000
+                                });
+                                table.ajax.reload();
+                            },
+                            error: function(jqXHR, exception) {
+                                toastr.error('Failed to update data');
+                            }
+                        });
+                    }
+                });
             }
-        }); 
-
-      // for showing conmfirmation on delete
-        function Delete(rowId) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success py-2 px-4",
-                    cancelButton: "btn btn-danger mx-4 py-2 px-4"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "No, cancel!",
-                reverseButtons: true,
-
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // AJAX call
-                    $.ajax({
-                        url: '{{ url('/item/destroy') }}' + '/' + rowId,
-                        method: 'get',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                        },
-                        success: function(result) {
-                            swalWithBootstrapButtons.fire({
-                                title: "Success!",
-                                text: "Slider Deletd successfully.",
-                                icon: "success",
-                                timer: 2000
-                            });
-                            table.ajax.reload();
-                        },
-                        error: function(jqXHR, exception) {
-                            toastr.error('Failed to update data');
-                        }
-                    });
-                }
-            });
-        }
+        });
     </script>
 @endpush

@@ -39,12 +39,10 @@
         if ($('#brand').val()) {
             loadModels($('#brand').val());
         }
-
-        // When the brand is changed, call the function to load models
         $('#brand').change(function() {
-            var brandId = $(this).val(); // Get selected brand ID
+            var brandId = $(this).val(); 
             if (brandId) {
-                loadModels(brandId);  // If there's a brand selected, load the models
+                loadModels(brandId);  
             } else {
                 $('#model').html('<option value="">-- Select Brand First --</option>'); // Reset model dropdown
             }
@@ -63,7 +61,6 @@
                 success: function(result) {
                     console.log('AJAX request successful', result);
                     $('#model').html('<option value="">Select model</option>'); // Reset the model dropdown
-                    // Populate the models dropdown
                     $.each(result.models, function(index, model) {
                         $('#model').append('<option value="' + model.id + '" ' + (model.id == "{{ old('model', $row->model_id ?? '') }}" ? 'selected' : '') + '>' + model.name + '</option>');
                     });

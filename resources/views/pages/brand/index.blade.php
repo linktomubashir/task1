@@ -14,9 +14,9 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <p class="mb-0">Brand Management</p>
 
-                    <a class="btn btn-sm btn-primary ms-auto" title="Creat brand"
-                        data-url="{{ route('brands.create') }}" data-size="small" data-ajax-popup="true"
-                        data-title="{{ __('Create New Brand') }}" data-bs-toggle="tooltip">
+                    <a class="btn btn-sm btn-primary ms-auto" title="Creat brand" data-url="{{ route('brands.create') }}"
+                        data-size="small" data-ajax-popup="true" data-title="{{ __('Create New Brand') }}"
+                        data-bs-toggle="tooltip">
                         Add New
                     </a>
                 </div>
@@ -50,7 +50,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#brand-table').DataTable({
+            var table = $('#brand-table').DataTable({
                 'paging': true,
                 'searching': true,
                 'ordering': true,
@@ -61,14 +61,25 @@
                 'stateSave': true,
                 'responsive': true,
                 'ajax': {
-                    'url': '{{ route('brands.show') }}',  
-                    
+                    'url': '{{ route('brands.show') }}',
+
                 },
-                columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'name', name: 'name' },
-                    { data: 'items', name: 'items' },
-                    { data: 'models', name: 'models' },
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'items',
+                        name: 'items'
+                    },
+                    {
+                        data: 'models',
+                        name: 'models'
+                    },
                     {
                         data: 'actions',
                         name: 'actions',
@@ -84,50 +95,51 @@
                     $('[data-toggle="tooltip"]').tooltip();
                 }
             });
+
+
+            // Delete Confirmation with SweetAlert
+            window.Delete = function(brandId) {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success py-2 px-4",
+                        cancelButton: "btn btn-danger mx-4 py-2 px-4"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX call to delete the brand
+                        $.ajax({
+                            url: '{{ route('brands.destroy', '') }}' + '/' + brandId,
+                            method: 'GET',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function(result) {
+                                swalWithBootstrapButtons.fire({
+                                    title: "Deleted!",
+                                    text: "Brand has been deleted.",
+                                    icon: "success",
+                                    timer: 2000
+                                });
+                                table.ajax.reload();
+                            },
+                            error: function(jqXHR, exception) {
+                                toastr.error('Failed to delete brand');
+                            }
+                        });
+                    }
+                });
+            }
         });
-
-        // Delete Confirmation with SweetAlert
-        function Delete(brandId) {
-            const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: "btn btn-success py-2 px-4",
-                    cancelButton: "btn btn-danger mx-4 py-2 px-4"
-                },
-                buttonsStyling: false
-            });
-
-            swalWithBootstrapButtons.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, delete it!",
-                cancelButtonText: "No, cancel!",
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // AJAX call to delete the brand
-                    $.ajax({
-                        url: '{{ route('brands.destroy', '') }}' + '/' + brandId,
-                        method: 'GET',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                        },
-                        success: function(result) {
-                            swalWithBootstrapButtons.fire({
-                                title: "Deleted!",
-                                text: "Brand has been deleted.",
-                                icon: "success",
-                                timer: 2000
-                            });
-                          table.ajax.reload();
-                        },
-                        error: function(jqXHR, exception) {
-                            toastr.error('Failed to delete brand');
-                        }
-                    });
-                }
-            });
-        }
     </script>
 @endpush
