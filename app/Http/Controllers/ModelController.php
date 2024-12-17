@@ -80,7 +80,7 @@ class ModelController extends Controller
                 $query->where('name', 'like', "%$keyword%");
             })
             ->addColumn('brand_name', function ($row) {
-                return $row->brand->name;
+                return $row->brand->name ?? 'N/A';
             })
             ->filterColumn('brand_name', function ($query, $keyword) {
                 $query->whereHas('brand', function ($q) use ($keyword) {
@@ -88,7 +88,7 @@ class ModelController extends Controller
                 });
             })
             ->addColumn('items', function ($row) {
-                return $row->items->count();
+                return $row->items->count() ;
             })
             ->orderColumn('items', function ($query, $order) {
                 $query->withCount('items')->orderBy('items_count', $order);
