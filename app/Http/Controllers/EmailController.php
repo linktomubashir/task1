@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\SendEmail;
+use App\Services\EmailService;
+use App\Models\EmailHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class EmailController extends Controller
 {
+    protected $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,7 +37,11 @@ class EmailController extends Controller
      */
     public function create()
     {
-        //
+        $emails = EmailHistory::all();
+        $pageData = [
+            'emails' => $emails,
+        ];
+        return view('pages.email.history')->with($pageData);
     }
 
     /**
@@ -46,19 +58,18 @@ class EmailController extends Controller
 
         ]);
         $attachment = $request->file('attachments');
-        // dd($request->message, $attachment);
-        try {
-            Mail::to($request->to)->send(new SendEmail(
-                $request->subject,
-                $request->message,
-                $attachment
-            ));
+        $emailSent = $this->emailService->sendEmail(
+            $request->to,
+            $request->subject,
+            $request->message,
+            $attachment
+        );
 
+        if ($emailSent) {
             return response()->json(['success' => true, 'message' => 'Email sent successfully!']);
-        } catch (\Exception $e) {
-            
-            return response()->json([ 'error' => true, 'message' => 'Failed to send the email. Error: ' . $e->getMessage(), ]);
         }
+
+        return response()->json(['error' => true, 'message' => 'Failed to send the email.']);
 
     }
 

@@ -4,7 +4,12 @@
     <div class="row">
         <div class="col-12 mt-3">
             <div class="card">
-                <div class="card-header">Email</div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <p class="mb-0">Send Email</p>
+                        <a class="btn btn-sm btn-primary ms-auto" title="History" data-url="{{ route('email.create') }}"
+                        data-size="small" data-ajax-popup="true" data-title="{{ __('History') }}"
+                        data-bs-toggle="tooltip">View History </a>
+                </div>
                 <div class="card-body">
                     {{ Form::open(['url' => route('email.store'), 'method' => 'post', 'id' => 'emailForm']) }}
                     <div class="row">
@@ -43,6 +48,9 @@
         </div>
     @endsection
     @push('scripts')
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
         <script>
             $(document).ready(function() {
                 $('#emailForm').on('submit', function(e) {
@@ -63,7 +71,7 @@
                         success: function(response) {
                             if (response.success) {
                                 toastr.success(response.message);
-                                $('#emailForm')[0].reset();
+                                // $('#emailForm')[0].reset();
                             } else {
                                 toastr.error('Something went wrong!');
                                 console.log(response.message);
