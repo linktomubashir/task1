@@ -48,11 +48,17 @@
 
                 <li class="nav-item {{ request()->is('models') ? 'active menu-open' : '' }}">
                     <a href="{{ url('models') }}" class="nav-link">
-                        <i class="nav-icon fas fa-box"></i> <!-- Font Awesome icon (can be customized) -->
+                        <i class="nav-icon fas fa-box"></i> 
                         <p>Models Page</p>
                     </a>
                 </li>
 
+                <li class="nav-item {{ request()->is('email') ? 'active menu-open' : '' }}">
+                    <a href="{{ url('email') }}" class="nav-link">
+                        <i class="fas fa-envelope"></i>
+                        <p>Email</p>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

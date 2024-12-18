@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ModelController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,8 +54,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/destroy/{id}', [BrandController::class, 'destroy'])->name('destroy');
         Route::post('/restore/{id}', [BrandController::class, 'restore'])->name('restore');
         Route::delete('/forceDelete/{id}', [BrandController::class, 'forceDelete'])->name('forceDelete');
-
     });
+
+    Route::resource('email', EmailController::class);
 
 });
 
