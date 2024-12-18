@@ -34,13 +34,6 @@
                                         <p><strong>To:</strong> {{ $email->to }}</p>
                                         <p><strong>Message:</strong></p>
                                         <div>{{ $email->message }}</div> 
-                                        
-                                        {{-- @if ($email->attachment)
-                                            <p><strong>Attachment:</strong> 
-                                                <a href="{{ asset('storage/' . $email->attachment) }}" target="_blank">View Attachment</a>
-                                            </p>
-                                        @endif --}}
-    
                                         <p><strong>Sent At:</strong> {{ $email->created_at->format('Y-m-d H:i') }}</p>
                                     </div>
                                 </div>
