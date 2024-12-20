@@ -30,13 +30,6 @@ class SmsService
                     'body' => $message
                 ]
             );
-            SmsHistory::create([
-                'to' => $to,
-                'from' => $this->from,
-                'message' => $message, 
-                'message_sid' => $messageSent->sid,
-            ]);
-
             return $messageSent->sid; 
         } catch (\Exception $e) { 
             return 'Error: ' . $e->getMessage();

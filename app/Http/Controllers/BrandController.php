@@ -143,9 +143,10 @@ class BrandController extends Controller
             'name' => 'required|string|max:255',
         ]);
         $brand = Brand::findOrFail($id);
-        event(new SendEmail($brand));
         $brand->update($validated);
-                return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
+        
+        event(new SendEmail($brand));
+        return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
 
     /**

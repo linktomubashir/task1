@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Models\User;
 use App\Events\SendEmail;
 use App\Services\EmailService;
+use App\Services\SmsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -13,9 +14,10 @@ class SendEmailListener
     /**
      * Create the event listener.
      */
-    public function __construct(EmailService $emailService)
+    public function __construct(EmailService $emailService, SmsService $smsService)
     {
         $this->emailService = $emailService;
+        $this->smsService = $smsService;
     }
 
     /**
@@ -35,5 +37,10 @@ class SendEmailListener
                 ("This is message for test " . $event->brand->name),
             );
         }
+
+        $this->smsService->sendSms(
+            null,
+            ("This is message for test " . $event->brand->name),
+        );
     }
 }
