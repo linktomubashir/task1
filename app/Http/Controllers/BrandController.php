@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Events\SendEmail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -142,9 +143,9 @@ class BrandController extends Controller
             'name' => 'required|string|max:255',
         ]);
         $brand = Brand::findOrFail($id);
-
+        event(new SendEmail($brand));
         $brand->update($validated);
-        return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
+                return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
 
     /**
