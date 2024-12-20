@@ -5,6 +5,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ModelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\SMSController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('email', EmailController::class);
+    Route::resource('sms', SMSController::class);
 
 });
 
