@@ -15,6 +15,18 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
+    public function index()
+    {
+        $pageData = [
+            'title' => 'All Users',
+            'pageName' => 'All Users',
+            'breadcrumb' => '<li class="breadcrumb-item"><a href="' . route('dashboard') . '">Dashboard</a></li>
+                              <li class="breadcrumb-item active">All Users</li>',
+        ];
+
+        return view('pages.user.index')->with($pageData);
+    }
+
     /**
      * Display the registration view.
      */
@@ -44,7 +56,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
     }
