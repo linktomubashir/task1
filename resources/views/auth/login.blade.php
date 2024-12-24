@@ -63,9 +63,9 @@
                     </div>
                 </form>
                 <!-- Register Link -->
-                <div class="text-center mt-4">
+                {{-- <div class="text-center mt-4">
                     <p>Don't have an account? <a href="{{ route('register') }}" class="text-primary">Register here</a></p>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

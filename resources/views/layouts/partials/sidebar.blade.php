@@ -48,7 +48,7 @@
 
                 <li class="nav-item {{ request()->is('models') ? 'active menu-open' : '' }}">
                     <a href="{{ url('models') }}" class="nav-link">
-                        <i class="nav-icon fas fa-box"></i> 
+                        <i class="nav-icon fas fa-box"></i>
                         <p>Models Page</p>
                     </a>
                 </li>
@@ -59,6 +59,42 @@
                         <p>Email</p>
                     </a>
                 </li>
+                @can('edit user')
+                <li class="nav-header">Settings</li>
+                    <li
+                        class="nav-item {{ request()->is('users') || request()->is('roles') || request()->is('permissions') ? 'active menu-open' : '' }}">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-info-circle"></i> <!-- Font Awesome info-circle icon -->
+                            <p>
+                                Users & Roles
+                                <i class="nav-arrow fas fa-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ url('users') }}"
+                                    class="nav-link {{ request()->is('users') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p>Users</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('roles') }}"
+                                    class="nav-link {{ request()->is('roles') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p>Roles</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('permissions') }}"
+                                    class="nav-link {{ request()->is('permissions') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-circle"></i>
+                                    <p>Permissions</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                @endcan
             </ul>
         </nav>
     </div>

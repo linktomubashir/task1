@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
 use yajra\DataTables\DataTables;
 
@@ -28,7 +31,14 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        // dd($roles);
+        $data = [
+            "action" => route('users.store'),
+            "method" => "POST",
+            'roles' => $roles,
+        ];
+        return view('pages.user.form')->with($data);
     }
 
     /**
@@ -36,18 +46,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+       $validated =  $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'role'=> ['required'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
+        ]) + [
             'password' => Hash::make($request->password),
-        ]);
+        ];
+
+        $user = User::create($validated);
+
+        $user->assignRole($request->role);
+        return redirect()->back()->with('success', 'User ' . $user->name . ' created successfully!');
     }
 
     /**
@@ -72,7 +83,8 @@ class UserController extends Controller
             })
            
             ->addColumn('role', function ($row) {
-                return '<span class="badge bg-success">' . $row->role . '</span> ';
+                // return $row->getRoleNames()->implode(', ');
+                return '<span class="badge bg-success">' . $row->getRoleNames()->implode(', ') . '</span> ';
             })
             ->addColumn('actions', function ($row) {
                 return '
@@ -93,7 +105,16 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $row = User::findOrFail($id);
+        $roles = Role::all();
+
+        $data = [
+            'action' => route('users.update', $row->id),
+            'method' => 'PUT',
+            'row' => $row,
+            'roles' => $roles,
+        ];
+        return view('pages.user.form')->with($data);
     }
 
     /**
@@ -101,7 +122,17 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+       $validated =  $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'role' => ['required'],
+        ]);
+        $user = User::findOrFail($id);
+        $user->update($validated);
+        $user->syncRoles([]);  // Removes role
+        // dd($user);
+        $user->assignRole($request->role);
+
+        return redirect()->back()->with('success', 'User ' . $user->name . ' updated successfully!');
     }
 
     /**
@@ -109,6 +140,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('roles.index')->with('success', 'Role ' . $user->name . ' deleted successfully!');
     }
 }

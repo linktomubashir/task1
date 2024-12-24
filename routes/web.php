@@ -1,15 +1,14 @@
 <?php
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ModelController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SMSController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -64,23 +63,25 @@ Route::middleware('auth')->group(function () {
     Route::resource('email', EmailController::class);
     Route::resource('sms', SMSController::class);
 
-    Route::resource('permissions', PermissionController::class);
-    Route::prefix('permission')->name('permission.')->group(function () {
-        Route::get('/show', [PermissionController::class, 'show'])->name('show');
-        Route::get('/destroy/{id}', [PermissionController::class, 'destroy'])->name('destroy');
-    });
+    Route::middleware(['can:edit user'])->group(function () {
+        Route::resource('permissions', PermissionController::class);
+        Route::prefix('permission')->name('permission.')->group(function () {
+            Route::get('/show', [PermissionController::class, 'show'])->name('show');
+            Route::get('/destroy/{id}', [PermissionController::class, 'destroy'])->name('destroy');
+        });
 
-    Route::resource('roles', RoleController::class);
-    Route::prefix('role')->name('role.')->group(function () {
-        Route::get('/show', [RoleController::class, 'show'])->name('show');
-        Route::get('/destroy/{id}', [RoleController::class, 'destroy'])->name('destroy');
+        Route::resource('roles', RoleController::class);
+        Route::prefix('role')->name('role.')->group(function () {
+            Route::get('/show', [RoleController::class, 'show'])->name('show');
+            Route::get('/destroy/{id}', [RoleController::class, 'destroy'])->name('destroy');
+        });
+        Route::resource('users', UserController::class);
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('/show', [UserController::class, 'show'])->name('show');
+            Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
+        });
+        // Route::resource('users', RegisteredUserController::class);
     });
-    // Route::resource('users', UserController::class);
-    Route::prefix('user')->name('user.')->group(function () {
-        Route::get('/show', [UserController::class, 'show'])->name('show');
-        Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
-    });
-    Route::resource('users', RegisteredUserController::class);
 });
 
 // Route::get('/permiss', [PermissionController::class, 'search'])->name('permiss');
