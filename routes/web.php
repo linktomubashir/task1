@@ -8,6 +8,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SMSController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,7 +81,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/show', [UserController::class, 'show'])->name('show');
             Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
         });
-        // Route::resource('users', RegisteredUserController::class);
+        Route::resource('services', ServiceController::class);
+        Route::prefix('service')->name('service.')->group(function () {
+            Route::get('/show', [ServiceController::class, 'show'])->name('show');
+            Route::get('/destroy/{id}', [ServiceController::class, 'destroy'])->name('destroy');
+            Route::get('/purchase/{id}', [ServiceController::class, 'purchase'])->name('purchase');
+            Route::post('/handlePayment', [ServiceController::class, 'handlePayment'])->name('handlePayment');
+        });
     });
 });
 

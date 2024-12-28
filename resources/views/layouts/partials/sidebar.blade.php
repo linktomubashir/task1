@@ -94,6 +94,13 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('services') }}"
+                           class="nav-link {{ request()->is('services') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-cogs"></i> 
+                            <p>Services</p>
+                        </a>
+                    </li>
                 @endcan
             </ul>
         </nav>
