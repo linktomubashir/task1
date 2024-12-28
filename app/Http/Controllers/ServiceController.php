@@ -116,7 +116,7 @@ class ServiceController extends Controller
                 'confirm' => true,
                 'return_url' => route('services.index'),
             ]);
-            return redirect()->route('services.index')->with('success', 'Payment Successful!');
+            return redirect()->back()->with('success', 'Payment Successful!');
 
         } catch (\Exception $e) {
             dd($e->getMessage());
