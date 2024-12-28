@@ -59,6 +59,13 @@
                         <p>Email</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ url('services') }}"
+                       class="nav-link {{ request()->is('services') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-briefcase"></i> 
+                        <p>Services</p>
+                    </a>
+                </li>
                 @can('edit user')
                 <li class="nav-header">Settings</li>
                     <li
@@ -94,13 +101,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ url('services') }}"
-                           class="nav-link {{ request()->is('services') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-cogs"></i> 
-                            <p>Services</p>
-                        </a>
-                    </li>
+                    
                 @endcan
             </ul>
         </nav>
