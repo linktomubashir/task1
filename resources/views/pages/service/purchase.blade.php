@@ -10,27 +10,50 @@
                 {{ Form::open(['url' => $action, 'method' => $method, 'id' => 'payment-form']) }}
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('name', __(' Full Name'), ['class' => 'col-form-label']) }}
+                                {{ Form::text('name', $row->name ?? null, ['class' => 'form-control', 'placeholder' => __('Enter your full name')]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 {{ Form::label('email', 'Email Address', ['class' => 'col-form-label']) }}
-                                {{ Form::email('email', null, ['class' => 'form-control', 'required' => 'required','placeholder' => 'example@gmail.com']) }}
+                                {{ Form::email('email', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'example@gmail.com']) }}
                             </div>
-                            {{ form::hidden('amount', $item->amount) }}
-                            {{ form::hidden('desc', $item->name) }}
-                            <!-- Stripe Card Number -->
-                            <div class="form-group mt-3">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('quantity', 'Quantity', ['class' => 'col-form-label']) }}
+                                {{ Form::number('quantity', 1, ['class' => 'form-control', 'id' => 'quantity', 'min' => 1, 'required' => true]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('total', 'Total', ['class' => 'col-form-label']) }}
+                                {{ Form::Text('total', null, ['class' => 'form-control', 'id' => 'total', 'min' => 1, 'disabled' => 'disabled']) }}
+                            </div>
+                        </div>
+                        {{ form::hidden('id', $item->id) }}
+
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="card-number" class="form-label">Card Number</label>
                                 <div id="card-number" class="form-control"></div>
                                 <div id="card-number-errors" role="alert" class="text-danger mt-2"></div>
                             </div>
+                        </div>
 
-                            <div class="form-group mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="expiry-date" class="form-label">Expiration Date</label>
                                 <div id="expiry-date" class="form-control"></div>
                                 <div id="expiry-date-errors" role="alert" class="text-danger mt-2"></div>
                             </div>
+                        </div>
 
-                            <div class="form-group mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="cvc" class="form-label">CVC</label>
                                 <div id="cvc" class="form-control"></div>
                                 <div id="cvc-errors" role="alert" class="text-danger mt-2"></div>
@@ -41,7 +64,7 @@
                 </div>
 
                 <div class="card-footer text-end">
-                    {{ Form::submit('Pay $' . number_format($item->amount, 2), ['class' => 'btn btn-primary', 'id' => 'submit-button']) }}
+                    {{ Form::submit('Pay', ['class' => 'btn btn-primary', 'id' => 'submit-button']) }}
                 </div>
             </div>
         </div>
@@ -83,6 +106,14 @@
                     }
                 });
             });
+
+            var itemAmount = {{ $item->amount ?? 0 }};
+            $('#quantity').on('input', function() {
+                let total = ($(this).val() * itemAmount).toFixed(2);
+                $('#total').val('$' + total);
+                $('#submit-button').val('Pay $' + total); 
+            }).trigger('input');
+
         });
     </script>
 @endpush

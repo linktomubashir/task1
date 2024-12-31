@@ -33,9 +33,11 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Amount</th>
+                                {{-- <th>Image</th> --}}
+                                <th>Price</th>
                                 <th>Brand</th>
                                 <th>Model</th>
+                                <th>Quantity</th>
                                 <th>Date Added</th>
                                 <th>Actions</th>
                             </tr>
@@ -79,6 +81,13 @@
                         data: 'name',
                         name: 'name'
                     },
+                    // {
+                    //     data: 'image',
+                    //     name: 'image',
+                    //     // render: function(data) {
+                    //     //     return data ? `<img src="${data}" alt="Item Image" width="50">` : 'No Image';
+                    //     // }
+                    // },
                     {
                         data: 'amount',
                         name: 'amount'
@@ -90,6 +99,10 @@
                     {
                         data: 'model',
                         name: 'model'
+                    },
+                    {
+                        data: 'quantity',
+                        name: 'quantity'
                     },
                     {
                         data: 'created_at',

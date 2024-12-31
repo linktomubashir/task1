@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Item;
 use App\Models\Models;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -49,8 +50,18 @@ class ItemController extends Controller
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'brand_id' => 'required|exists:brands,id', 
-            'model_id' => 'required|exists:models,id', 
+            'model_id' => 'nullable|exists:models,id', 
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+            'quantity' => 'required|integer|min:1', 
         ]);
+
+        if ($request->hasFile('image')) {
+            $originalFileName = $request->file('image')->getClientOriginalName();
+            $currentDate = Carbon::now()->format('Y-m-d_H-i-s');
+            $fileName = $currentDate . '_' . $originalFileName;
+            $validated['image'] = $request->file('image')->storeAs('items', $fileName, 'public');
+        }
+        // dd($validated);
         Item::create($validated);
         return redirect()->route('item.index')->with('success', 'Item created successfully!');
     }
@@ -96,6 +107,15 @@ class ItemController extends Controller
             })
             ->addColumn('model', function ($row) {
                 return $row->models->name ?? 'N/A';
+            })
+            // ->addColumn('image', function($row) {
+            //     return $row->image ? asset('images/' . $row->image)  : null; // Return image URL
+            // })
+            // ->addColumn('image', function($row) {
+            //     return '<img src="' . asset('images/' . $row->image) . '" alt="Item Image" style="max-width: 100px; height: auto;">';
+            // })
+            ->addColumn('quantity', function($row) {
+                return $row->quantity; 
             })
             ->addColumn('actions', function ($row) {
                 if ($row->trashed()) {
@@ -152,9 +172,18 @@ class ItemController extends Controller
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'brand_id' => 'required|exists:brands,id', 
-            'model_id' => 'required|exists:models,id', 
+            'model_id' => 'nullable|exists:models,id', 
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+            'quantity' => 'required|integer|min:1', 
         ]);
 
+        if ($request->hasFile('image')) {
+            $originalFileName = $request->file('image')->getClientOriginalName();
+            $currentDate = Carbon::now()->format('Y-m-d_H-i-s');
+            $fileName = $currentDate . '_' . $originalFileName;
+            $validated['image'] = $request->file('image')->storeAs('items', $fileName, 'public');
+        }
+// dd($validated);
         $item->update($validated);
 
         return redirect()->route('item.index')->with('success', 'Item updated successfully!');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Item;
+use App\Events\PurchaseItem;
+use App\Jobs\StockManagementJob;
 use Illuminate\Http\Request;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -99,23 +101,38 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'email' => 'required|email',
             'stripeToken' => 'required|string',
+            'quantity' => 'required|integer|min:1',
         ]);
-
+        $item = Item::findOrFail($request->id);
         // dd($request->amount);
+        $totalAmount = $item->amount * $validated['quantity'];
         try {
-            $paymentIntent = PaymentIntent::create([
-                'amount' => $request->amount * 100,
-                'currency' => 'usd',
-                'description' => 'Payment for item: ' . $request->desc,
-                'payment_method_data' => [
-                    'type' => 'card',
-                    'card' => [
-                        'token' => $validated['stripeToken'],
-                    ],
-                ],
-                'confirm' => true,
-                'return_url' => route('services.index'),
-            ]);
+            // $paymentIntent = PaymentIntent::create([
+            //     'amount' => $totalAmount * 100,
+            //     'currency' => 'usd',
+            //     'description' => 'Payment for item: ' . $item->name,
+            //     'payment_method_data' => [
+            //         'type' => 'card',
+            //         'card' => [
+            //             'token' => $validated['stripeToken'],
+            //         ],
+            //     ],
+            //     'confirm' => true,
+            //     'return_url' => route('services.index'),
+            // ]);
+            
+            // $item->quantity -= $validated['quantity'];
+            // $item->update();
+            // Order::create([
+            //     'item_id' => $item->id,
+            //     'quantity' => $validated['quantity'],
+            //     'email' => $validated['email'],
+            //     'amount' => $item->amount * $request->quantity,
+            //     'status' => $paymentIntent->status,
+            // ]);
+
+            event(new PurchaseItem($item, $validated['quantity']));
+            dispatch(new StockManagementJob($item, $validated['quantity']));
             return redirect()->back()->with('success', 'Payment Successful!');
 
         } catch (\Exception $e) {

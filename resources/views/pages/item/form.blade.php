@@ -1,4 +1,4 @@
-{{ Form::open(['url' => $action, 'method' => $method]) }}
+{{ Form::open(['url' => $action, 'method' => $method, 'enctype' => 'multipart/form-data']) }}
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12">
@@ -25,6 +25,19 @@
                 {{ Form::select('model_id', ['' => '-- Select Brand First --'], '', ['class' => 'form-control', 'id' => 'model']) }}
             </div>
         </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                {{ Form::label('image', __('Image'), ['class' => 'col-form-label']) }}
+                {{ Form::file('image', ['class' => 'form-control']) }}
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                {{ Form::label('quantity', __('Quantity'), ['class' => 'col-form-label']) }}
+                {{ Form::number('quantity', $row->quantity ?? null, ['class' => 'form-control', 'placeholder' => __('Enter Quantity')]) }}
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal-footer">
@@ -32,7 +45,6 @@
     <input type="submit" value="{{ isset($row) ? __('Update') : __('Create') }}" class="btn btn-primary">
 </div>
 {{ Form::close() }}
-
 
 <script>
     $(document).ready(function() {
@@ -73,4 +85,3 @@
         }
     });
 </script>
-

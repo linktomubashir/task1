@@ -15,7 +15,6 @@
                     <p class="mb-0">Services</p>
                 </div>
                 <div class="card-body">
-                    <!-- Table for roles -->
                     <table class="table table-bordered table-striped" id="service-table">
                         <thead>
                             <tr>
