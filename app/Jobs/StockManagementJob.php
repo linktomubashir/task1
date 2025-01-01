@@ -37,11 +37,10 @@ class StockManagementJob implements ShouldQueue
                 $this->item->save();
 
                 if ($this->item->quantity == 0) {
-                    // $this->item->status = 'out_of_stock';
-                    // $this->item->save();
-
+                    $this->item->status = 'out_of_stock';
+                    $this->item->save();
+                    event(new ItemOutOfStock($this->item));
                 }
-                event(new ItemOutOfStock($this->item));
             }
             DB::commit();
         } catch (\Exception $e) {

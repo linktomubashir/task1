@@ -54,7 +54,9 @@ class ItemController extends Controller
             // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             'quantity' => 'required|integer|min:1', 
         ]);
-
+        if ($validated['quantity'] >= 1) {
+            $validated['status'] = 'in_stock';
+        }
         if ($request->hasFile('image')) {
             $originalFileName = $request->file('image')->getClientOriginalName();
             $currentDate = Carbon::now()->format('Y-m-d_H-i-s');
@@ -108,6 +110,10 @@ class ItemController extends Controller
             ->addColumn('model', function ($row) {
                 return $row->models->name ?? 'N/A';
             })
+            ->addColumn('status', function ($row) {
+                
+                return $row->status == 'in_stock' ? '<span class="badge bg-success">In Stock</span>' : '<span class="badge bg-warning">Out of Stock</span>';
+            })
             // ->addColumn('image', function($row) {
             //     return $row->image ? asset('images/' . $row->image)  : null; // Return image URL
             // })
@@ -139,7 +145,7 @@ class ItemController extends Controller
                         </a>';
                 }
             })
-            ->rawColumns(['image', 'actions'])
+            ->rawColumns(['status','image', 'actions'])
             ->toJson();
 
     }
@@ -176,14 +182,16 @@ class ItemController extends Controller
             // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             'quantity' => 'required|integer|min:1', 
         ]);
-
+        if ($validated['quantity'] >= 1) {
+            $validated['status'] = 'in_stock';
+        }
         if ($request->hasFile('image')) {
             $originalFileName = $request->file('image')->getClientOriginalName();
             $currentDate = Carbon::now()->format('Y-m-d_H-i-s');
             $fileName = $currentDate . '_' . $originalFileName;
             $validated['image'] = $request->file('image')->storeAs('items', $fileName, 'public');
         }
-// dd($validated);
+        // dd($validated);
         $item->update($validated);
 
         return redirect()->route('item.index')->with('success', 'Item updated successfully!');

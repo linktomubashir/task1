@@ -19,5 +19,5 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 
 Broadcast::channel('item-out-of-stock', function ($user) {
-    return true;  
+    return $user->can('add item	');
 });

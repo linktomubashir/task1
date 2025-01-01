@@ -81,29 +81,29 @@ Route::middleware('auth')->group(function () {
             Route::get('/show', [UserController::class, 'show'])->name('show');
             Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
         });
-        Route::resource('services', ServiceController::class);
-        Route::prefix('service')->name('service.')->group(function () {
-            Route::get('/show', [ServiceController::class, 'show'])->name('show');
-            Route::get('/destroy/{id}', [ServiceController::class, 'destroy'])->name('destroy');
-            Route::get('/purchase/{id}', [ServiceController::class, 'purchase'])->name('purchase');
-            Route::post('/handlePayment', [ServiceController::class, 'handlePayment'])->name('handlePayment');
-        });
+    });
+    Route::resource('services', ServiceController::class);
+    Route::prefix('service')->name('service.')->group(function () {
+        Route::get('/show', [ServiceController::class, 'show'])->name('show');
+        Route::get('/destroy/{id}', [ServiceController::class, 'destroy'])->name('destroy');
+        Route::get('/purchase/{id}', [ServiceController::class, 'purchase'])->name('purchase');
+        Route::post('/handlePayment', [ServiceController::class, 'handlePayment'])->name('handlePayment');
     });
 });
 
 // Route::get('/permiss', [PermissionController::class, 'search'])->name('permiss');
 
-// use App\Models\Item;
-// use App\Events\ItemOutOfStock;
+use App\Models\Item;
+use App\Events\ItemOutOfStock;
 
-// Route::get('/test/{itemId}', function ($itemId) {
-//     // Find the item by ID
-//     $item = Item::findOrFail($itemId);
+Route::get('/test/{itemId}', function ($itemId) {
+    // Find the item by ID
+    $item = Item::findOrFail($itemId);
 
-//     event(new ItemOutOfStock($item));
+    event(new ItemOutOfStock($item));
 
-//     return response()->json(['message' => 'Stock reduced and event broadcasted.']);
-// });
+    return response()->json(['message' => 'Stock reduced and event broadcasted.']);
+});
 
 
 require __DIR__ . '/auth.php';

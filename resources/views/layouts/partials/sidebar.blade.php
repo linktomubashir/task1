@@ -21,8 +21,8 @@
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
 
                 <!-- Dashboard Menu Item -->
-                <li class="nav-item {{ request()->is('dashboard') ? 'active menu-open' : '' }}">
-                    <a href="/dashboard" class="nav-link">
+                <li class="nav-item {{ request()->is('/') ? 'active menu-open' : '' }}">
+                    <a href="/" class="nav-link">
                         <i class="nav-icon bi bi-house-door"></i> <!-- Updated to Bootstrap icon -->
                         <p>Dashboard</p>
                     </a>

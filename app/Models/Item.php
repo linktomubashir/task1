@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Item extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $fillable = ['name', 'amount', 'brand_id','model_id','image','quantity'];
+    protected $fillable = ['name', 'amount', 'brand_id','model_id','image','quantity','status'];
 
     public function brand(){
         return $this->belongsTo(Brand::class);

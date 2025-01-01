@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table) {
+
+            $table->string('status')->default('in_stock');
             $table->string('image')->nullable();
             $table->integer('quantity')->default(0); 
         });

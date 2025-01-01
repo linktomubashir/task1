@@ -14,8 +14,8 @@
                                 <div class="card mb-4">
                                     <div class="card-body">
                                         <h3>{{ $item->name }}</h3>
-                                        <p class="card-text">Price: ${{ $item->amount }}</p>
-                                        <p>Model: {{ $item->models->name }}</p>
+                                        <p class="card-text">Price: ${{ $item->amount ?? '' }}</p>
+                                        <p>Model: {{ $item->models->name ?? '' }}</p>
                                         <a href="{{ route('service.purchase', $item->id) }}"
                                             class="btn btn-sm btn-primary">Purchase</a>
                                     </div>

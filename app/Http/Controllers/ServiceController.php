@@ -38,6 +38,7 @@ class ServiceController extends Controller
     public function show(Request $request)
     {
         $data = Item::query();
+        $data->where('status', 'in_stock');
 
         return DataTables::of($data)
             ->addColumn('id', function ($row) {
@@ -61,7 +62,7 @@ class ServiceController extends Controller
 
     public function edit(string $id)
     {
-        $items = Item::where('brand_id', $id)->get();
+        $items = Item::where('brand_id', $id)->where('status','in_stock')->get();
         $brand = Brand::findOrFail($id);
         $pageData = [
             'title' => 'Items',
@@ -107,31 +108,20 @@ class ServiceController extends Controller
         // dd($request->amount);
         $totalAmount = $item->amount * $validated['quantity'];
         try {
-            // $paymentIntent = PaymentIntent::create([
-            //     'amount' => $totalAmount * 100,
-            //     'currency' => 'usd',
-            //     'description' => 'Payment for item: ' . $item->name,
-            //     'payment_method_data' => [
-            //         'type' => 'card',
-            //         'card' => [
-            //             'token' => $validated['stripeToken'],
-            //         ],
-            //     ],
-            //     'confirm' => true,
-            //     'return_url' => route('services.index'),
-            // ]);
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $totalAmount * 100,
+                'currency' => 'usd',
+                'description' => 'Payment for item: ' . $item->name,
+                'payment_method_data' => [
+                    'type' => 'card',
+                    'card' => [
+                        'token' => $validated['stripeToken'],
+                    ],
+                ],
+                'confirm' => true,
+                'return_url' => route('services.index'),
+            ]);
             
-            // $item->quantity -= $validated['quantity'];
-            // $item->update();
-            // Order::create([
-            //     'item_id' => $item->id,
-            //     'quantity' => $validated['quantity'],
-            //     'email' => $validated['email'],
-            //     'amount' => $item->amount * $request->quantity,
-            //     'status' => $paymentIntent->status,
-            // ]);
-
-            event(new PurchaseItem($item, $validated['quantity']));
             dispatch(new StockManagementJob($item, $validated['quantity']));
             return redirect()->back()->with('success', 'Payment Successful!');
 

@@ -38,6 +38,7 @@
                                 <th>Brand</th>
                                 <th>Model</th>
                                 <th>Quantity</th>
+                                <th>Status</th>
                                 <th>Date Added</th>
                                 <th>Actions</th>
                             </tr>
@@ -103,6 +104,10 @@
                     {
                         data: 'quantity',
                         name: 'quantity'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
                     },
                     {
                         data: 'created_at',
