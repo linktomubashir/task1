@@ -100,6 +100,7 @@ class ServiceController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $validated = $request->validate([
+            'name' => 'required|string',
             'email' => 'required|email',
             'stripeToken' => 'required|string',
             'quantity' => 'required|integer|min:1',
@@ -121,8 +122,7 @@ class ServiceController extends Controller
                 'confirm' => true,
                 'return_url' => route('services.index'),
             ]);
-            
-            dispatch(new StockManagementJob($item, $validated['quantity']));
+            dispatch(new StockManagementJob($item, $validated['quantity'],$validated['name'],$validated['email']));
             return redirect()->back()->with('success', 'Payment Successful!');
 
         } catch (\Exception $e) {

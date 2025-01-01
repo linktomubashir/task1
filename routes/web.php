@@ -3,6 +3,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemRevenueController;
 use App\Http\Controllers\ModelController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -88,6 +89,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/destroy/{id}', [ServiceController::class, 'destroy'])->name('destroy');
         Route::get('/purchase/{id}', [ServiceController::class, 'purchase'])->name('purchase');
         Route::post('/handlePayment', [ServiceController::class, 'handlePayment'])->name('handlePayment');
+    });
+
+    Route::resource('items-revenue', ItemRevenueController::class);
+    Route::prefix('item-revenue')->name('item-revenue.')->group(function () {
+        Route::get('/show', [ItemRevenueController::class, 'show'])->name('show');
     });
 });
 
