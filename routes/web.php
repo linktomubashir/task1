@@ -91,19 +91,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Route::get('/permiss', [PermissionController::class, 'search'])->name('permiss');
-
-use App\Models\Item;
-use App\Events\ItemOutOfStock;
-
-Route::get('/test/{itemId}', function ($itemId) {
-    // Find the item by ID
-    $item = Item::findOrFail($itemId);
-
-    event(new ItemOutOfStock($item));
-
-    return response()->json(['message' => 'Stock reduced and event broadcasted.']);
-});
-
 
 require __DIR__ . '/auth.php';
