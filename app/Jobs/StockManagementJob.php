@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ItemOutOfStock;
 use App\Models\Item;
-use App\Models\SoldItems;
+use App\Models\SoldItem;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -45,14 +45,15 @@ class StockManagementJob implements ShouldQueue
                     event(new ItemOutOfStock($this->item));
                 }
             }
-            SoldItems::create([
+            SoldItem::create([
                 'coustomer_name'=> $this->coustomer_name,
                 'coustomer_email'=> $this->coustomer_email,
                 'item_id' => $this->item->id,
                 'quantity' => $this->quantity,
                 'brand' => $this->item->brand->id,
-                'price_per_item' => $this->item->amount,
-                'total_amount' => $this->item->amount * $this->quantity,
+                'original_price' => $this->item->amount,
+                'discount_price' => $this->item->getEffectivePrice(),
+                'total_amount' => $this->item->getEffectivePrice() * $this->quantity,
                 'status' => 'sold',
             ]);
             DB::commit();

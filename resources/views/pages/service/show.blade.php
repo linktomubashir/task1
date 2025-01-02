@@ -16,7 +16,6 @@
                                         <h3>{{ $item->name }}</h3>
                                         @if($item->getEffectivePrice() < $item->amount)  
                                         @php
-                                            // Calculate discount percentage
                                             $discountPercentage = round(((($item->amount - $item->getEffectivePrice()) / $item->amount) * 100), 2);
                                         @endphp
                                         <p class="card-text">

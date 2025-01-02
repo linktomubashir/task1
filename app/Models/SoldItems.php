@@ -15,7 +15,8 @@ class SoldItems extends Model
         'item_id',
         'quantity',
         'brand',
-        'price_per_item',
+        'original_price',
+        'discount_price',
         'total_amount',
     ];
 

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('item_id'); 
             $table->integer('quantity'); 
             $table->string('brand_id'); 
-            $table->decimal('price_per_item', 10, 2); 
+            $table->decimal('original_price', 10, 2); 
+            $table->decimal('discount_price', 10, 2); 
             $table->decimal('total_amount', 10, 2); 
             $table->string('status')->nullable();
             $table->timestamps(); 

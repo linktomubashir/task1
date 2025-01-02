@@ -107,7 +107,7 @@
                 });
             });
 
-            var itemAmount = {{ $item->amount ?? 0 }};
+            var itemAmount = {{ $item->getEffectivePrice() ?? 0 }};
             $('#quantity').on('input', function() {
                 let total = ($(this).val() * itemAmount).toFixed(2);
                 $('#total').val('$' + total);

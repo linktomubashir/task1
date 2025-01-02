@@ -25,12 +25,12 @@ class Item extends Model
         $originalPrice = $this->amount;
         $finalPrice = $originalPrice;
 
-        $brandItemCount = $this->brand->models()->count();
+        $brandItemCount = $this->brand ? $this->brand->items()->count() : 0;
         if ($brandItemCount > 10) {
             $finalPrice = $finalPrice - ($finalPrice * 0.10);
         }
         if ($this->quantity < 5 && $this->quantity >= 1) {
-            $finalPrice = $finalPrice - ($finalPrice * 0.05);
+            $finalPrice = $finalPrice - ($finalPrice * 0.06);
         }
         return round($finalPrice, 2);
     }

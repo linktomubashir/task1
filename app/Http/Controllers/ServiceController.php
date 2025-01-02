@@ -37,15 +37,15 @@ class ServiceController extends Controller
 
     public function show(Request $request)
     {
-        $data = Item::query();
-        $data->where('status', 'in_stock');
+        $data = Brand::query();
+        $data->has('items');
 
         return DataTables::of($data)
             ->addColumn('id', function ($row) {
                 return $row->id;
             })
             ->addColumn('name', function ($row) {
-                return $row->brand->name ?? 'N/A';
+                return $row->name ?? 'N/A';
             })
             ->orderColumn('name', function ($query, $order) {
                 $query->orderBy('name', $order)->orderBy('id', $order);
@@ -54,7 +54,7 @@ class ServiceController extends Controller
                 $query->where('name', 'like', "%$keyword%");
             })
             ->addColumn('actions', function ($row) {
-                return '<a href="' . route('services.edit', [$row->brand->id]) . '" class="btn btn-sm btn-primary" target="blank">Detail</a>';
+                return '<a href="' . route('services.edit', [$row->id]) . '" class="btn btn-sm btn-primary" target="blank">Detail</a>';
             })
             ->rawColumns(['permissions', 'actions'])
             ->toJson();
@@ -107,7 +107,7 @@ class ServiceController extends Controller
         ]);
         $item = Item::findOrFail($request->id);
         // dd($request->amount);
-        $totalAmount = $item->amount * $validated['quantity'];
+        $totalAmount = $item->getEffectivePrice() * $validated['quantity'];
         try {
             $paymentIntent = PaymentIntent::create([
                 'amount' => $totalAmount * 100,
