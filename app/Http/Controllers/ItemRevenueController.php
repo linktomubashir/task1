@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use App\Models\SoldItems;
+use App\Models\SoldItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -20,7 +20,7 @@ class ItemRevenueController extends Controller
             'pageName' => 'Generate Report',
             'breadcrumb' => '<li class="breadcrumb-item"><a href="' . route('dashboard') . '">Dashboard</a></li>
                               <li class="breadcrumb-item active">Report</li>',
-            'brands' => $brands
+            'brands' => $brands,
         ];
 
         return view('pages.report.index')->with($pageData);
@@ -30,24 +30,21 @@ class ItemRevenueController extends Controller
      */
     public function show(Request $request)
     {
-       $validated =  $request->validate([
+        $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $start_date = Carbon::parse($validated['start_date'])->startOfDay(); 
-        $end_date =Carbon::parse($validated['end_date'])->endOfDay();
+        $start_date = Carbon::parse($validated['start_date'])->startOfDay();
+        $end_date = Carbon::parse($validated['end_date'])->endOfDay();
 
-   $items=SoldItems::with(['item.brand'])
-        ->join('items', 'sold_items.item_id', '=', 'items.id')
-        ->whereBetween('sold_items.created_at', [$start_date, $end_date])  // Use sold_items.created_at
-        ->selectRaw('sum(total_amount) as total_revenue, items.brand_id')
-        ->groupBy('items.brand_id')
-        ->get()
-        ->map(function($item) {
-            $item->brand_name = $item->brand->name;
-            return $item;
-        });
+        $items = SoldItem::with('brand')->whereBetween('created_at', [$start_date, $end_date])
+            ->get()
+            ->groupBy('brand_id')
+            ->map(fn($group) => [
+                'brand_name' => $group->first()->brand->name,
+                'total_revenue' => $group->sum('total_amount'), nb,
+            ]);
         return response()->json($items);
     }
 }

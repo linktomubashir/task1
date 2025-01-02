@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SoldItems extends Model
+class SoldItem extends Model
 {
     use HasFactory;
     protected $table = 'sold_items';
@@ -14,9 +14,14 @@ class SoldItems extends Model
         'coustomer_email',
         'item_id',
         'quantity',
+<<<<<<< HEAD:app/Models/SoldItems.php
         'brand',
         'original_price',
         'discount_price',
+=======
+        'brand_id',
+        'price_per_item',
+>>>>>>> main:app/Models/SoldItem.php
         'total_amount',
     ];
 
