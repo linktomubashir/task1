@@ -34,7 +34,8 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 {{-- <th>Image</th> --}}
-                                <th>Price</th>
+                                <th>Original Price</th>
+                                <th>Discount Price</th>
                                 <th>Brand</th>
                                 <th>Model</th>
                                 <th>Quantity</th>
@@ -92,6 +93,10 @@
                     {
                         data: 'amount',
                         name: 'amount'
+                    },
+                    {
+                        data: 'discount_price',
+                        name: 'discount_price'
                     },
                     {
                         data: 'brand',

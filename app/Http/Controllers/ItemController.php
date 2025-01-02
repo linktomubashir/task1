@@ -95,6 +95,9 @@ class ItemController extends Controller
             ->addColumn('amount', function ($row) {
                 return $row->amount ?? 0;
             })
+            ->addColumn('discount_price', function ($row) {
+                return $row->getEffectivePrice();
+            })
             ->orderColumn('amount', function ($query, $order) {
                 $query->orderBy('amount', $order)->orderBy('id', $order);
             })
