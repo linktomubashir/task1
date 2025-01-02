@@ -14,14 +14,9 @@ class SoldItem extends Model
         'coustomer_email',
         'item_id',
         'quantity',
-<<<<<<< HEAD:app/Models/SoldItems.php
         'brand',
         'original_price',
         'discount_price',
-=======
-        'brand_id',
-        'price_per_item',
->>>>>>> main:app/Models/SoldItem.php
         'total_amount',
     ];
 
