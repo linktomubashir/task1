@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('send:messages')->dailyAt('12:00');
+        $schedule->command('item:check-issue')->everySevenDays()->at('12:00');
     }
 
     /**
