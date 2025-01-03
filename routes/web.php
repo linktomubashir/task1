@@ -8,7 +8,7 @@ use App\Http\Controllers\ModelController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SMSController;
+// use App\Http\Controllers\SMSController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('email', EmailController::class);
-    Route::resource('sms', SMSController::class);
+    // Route::resource('sms', SMSController::class);
 
     Route::middleware(['can:edit user'])->group(function () {
         Route::resource('permissions', PermissionController::class);

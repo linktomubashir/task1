@@ -49,10 +49,10 @@ class ItemController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'brand_id' => 'required|exists:brands,id', 
-            'model_id' => 'nullable|exists:models,id', 
-            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-            'quantity' => 'required|integer|min:1', 
+            'brand_id' => 'required|exists:brands,id',
+            'model_id' => 'nullable|exists:models,id',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'quantity' => 'required|integer|min:1',
         ]);
         if ($validated['quantity'] >= 1) {
             $validated['status'] = 'in_stock';
@@ -114,17 +114,17 @@ class ItemController extends Controller
                 return $row->models->name ?? 'N/A';
             })
             ->addColumn('status', function ($row) {
-                
+
                 return $row->status == 'in_stock' ? '<span class="badge bg-success">In Stock</span>' : '<span class="badge bg-warning">Out of Stock</span>';
             })
-            // ->addColumn('image', function($row) {
-            //     return $row->image ? asset('images/' . $row->image)  : null; // Return image URL
-            // })
-            // ->addColumn('image', function($row) {
-            //     return '<img src="' . asset('images/' . $row->image) . '" alt="Item Image" style="max-width: 100px; height: auto;">';
-            // })
-            ->addColumn('quantity', function($row) {
-                return $row->quantity; 
+        // ->addColumn('image', function($row) {
+        //     return $row->image ? asset('images/' . $row->image)  : null; // Return image URL
+        // })
+        // ->addColumn('image', function($row) {
+        //     return '<img src="' . asset('images/' . $row->image) . '" alt="Item Image" style="max-width: 100px; height: auto;">';
+        // })
+            ->addColumn('quantity', function ($row) {
+                return $row->quantity;
             })
             ->addColumn('actions', function ($row) {
                 if ($row->trashed()) {
@@ -138,17 +138,21 @@ class ItemController extends Controller
                         </a>';
                 } else {
                     return '
-                        <a href="#" title="Edit Item" data-url="' . route('item.edit', [$row->id]) . '" data-size="md" data-ajax-popup="true"
+                        <a href="#" class="btn btn-sm btn-info" title="Edit Item" data-url="' . route('item.edit', [$row->id]) . '" data-size="md" data-ajax-popup="true"
                         data-title="' . __('Edit Item') . '" data-bs-toggle="tooltip">
-                            <i class="fas fa-edit text-info font-18"></i>
+                            <i class="fa fa-edit text-white"></i>
                         </a>
-                        &nbsp;&nbsp;
-                        <a href="#" title="Delete" onclick="handleAction(' . $row->id . ', \'delete\')" data-bs-toggle="tooltip">
-                            <i class="fa fa-trash text-danger font-18"></i>
+                         &nbsp;&nbsp;
+                         <a href="#" class="btn btn-sm btn-success" title="Show History" onclick="itemHistory(' . $row->id . ')"data-bs-toggle="tooltip">
+                            <i class="fas fa-history"></i>
+                         </a>
+                            &nbsp;&nbsp;
+                        <a href="#" class="btn btn-sm btn-danger" title="Delete" onclick="handleAction(' . $row->id . ', \'delete\')" data-bs-toggle="tooltip">
+                            <i class="fa fa-trash"></i>
                         </a>';
                 }
             })
-            ->rawColumns(['status','image', 'actions'])
+            ->rawColumns(['status', 'image', 'actions'])
             ->toJson();
 
     }
@@ -161,7 +165,7 @@ class ItemController extends Controller
         $item = Item::findOrFail($id);
         $brands = Brand::all();
         $data = [
-            'action' => route('item.update', $item->id), 
+            'action' => route('item.update', $item->id),
             'row' => $item,
             'brands' => $brands,
             'method' => 'PUT',
@@ -180,10 +184,10 @@ class ItemController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric',
-            'brand_id' => 'required|exists:brands,id', 
-            'model_id' => 'nullable|exists:models,id', 
-            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-            'quantity' => 'required|integer|min:1', 
+            'brand_id' => 'required|exists:brands,id',
+            'model_id' => 'nullable|exists:models,id',
+            // 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'quantity' => 'required|integer|min:1',
         ]);
         if ($validated['quantity'] >= 1) {
             $validated['status'] = 'in_stock';
@@ -236,8 +240,8 @@ class ItemController extends Controller
     {
         if (!empty($request->brand_id)) {
             $brandId = $request->input('brand_id');
-            $models = Models::where('brand_id', $brandId)->get(); 
-        
+            $models = Models::where('brand_id', $brandId)->get();
+
             return response()->json(['models' => $models]);
         } else {
             return response()->json(['error' => 'Brand ID is required'], 400);
