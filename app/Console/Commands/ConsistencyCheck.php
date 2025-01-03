@@ -31,13 +31,19 @@ class ConsistencyCheck extends Command
         DB::beginTransaction();
 
         try {
-            $items = Item::whereHas('models', function ($query) {
+            $items = Item::with('models')->whereHas('models', function ($query) {
                 $query->whereColumn('brand_id', '!=', 'items.brand_id');
             })->get();
-            foreach ($items as $item) {
-                $item->update([
-                    'brand_id' => $item->models->brand_id,
-                ]);
+            if (!empty($items)) {
+                foreach ($items as $item) {
+                    $brandId = $item->models?->brand_id;
+
+                    if ($item->models && $item->brand_id != $brandId) {
+                        $item->update([
+                            'brand_id' => $brandId,
+                        ]);
+                    }
+                }
             }
             DB::commit();
 
