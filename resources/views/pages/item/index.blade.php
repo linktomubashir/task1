@@ -49,6 +49,7 @@
             </div>
         </div>
     </div>
+    @include('pages.item.history');
 @endsection
 
 @push('scripts')
@@ -207,6 +208,7 @@
                     }
                 });
             };
+           
         });
     </script>
 @endpush
