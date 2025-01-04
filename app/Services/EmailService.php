@@ -26,6 +26,8 @@ class EmailService
                             'mime' => $attachment->getMimeType(),
                         ]
                     );
+                } elseif (is_string($attachment) && file_exists($attachment)) {
+                    $mail->attach($attachment);
                 }
             });
 
@@ -33,8 +35,8 @@ class EmailService
                 'to' => $to,
                 'subject' => $subject,
                 'message' => $msg,
-                'attachment' => $attachment ? $attachment->getClientOriginalName() : null,
-            ]);
+                'attachment' => $attachment instanceof UploadedFile ? $attachment->getClientOriginalName() : basename($attachment),
+             ]);
 
             return true;
         } catch (\Exception $e) {
