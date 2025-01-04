@@ -5,6 +5,7 @@
     <link href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -12,9 +13,18 @@
         <div class="col-md-12 mt-3">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <p class="mb-0">Item page</p>
+                    <p class="mb-0">Item Management</p>
 
                     <div class="d-flex align-items-end ms-auto">
+                        <div class="mx-3" style="width: 180px;">
+                            {{ Form::select('brand', $brands->pluck('name', 'id'), null, ['id' => 'brand_id', 'class' => 'form-control select2', 'multiple' , 'data-placeholder' => 'Please select category']) }}
+                        </div>
+                        <div class="mx-3" style="width: 150px;">
+                            {{ Form::number('min-price', null, ['id' => 'min-price', 'class' => 'form-control', 'placeholder' => 'Enter min amount']) }}
+                        </div>
+                        <div class="mx-3" style="width: 150px;">
+                            {{ Form::number('max-price', null, ['id' => 'max-price', 'class' => 'form-control', 'placeholder' => 'Enter max amount']) }}
+                        </div>
                         <div class="form-check form-switch me-3">
                             <label class="form-check-label" for="showTrashed">Show Trashed items</label>
                             <input class="form-check-input" type="checkbox" id="showTrashed" />
@@ -49,7 +59,7 @@
             </div>
         </div>
     </div>
-    @include('pages.item.history');
+    @include('pages.item.history')
 @endsection
 
 @push('scripts')
@@ -57,6 +67,7 @@
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -74,6 +85,9 @@
                     'url': '{{ route('item.show') }}',
                     'data': function(d) {
                         d.show_trashed = $('#showTrashed').prop('checked');
+                        d.brand_id = $('#brand_id').val();
+                        d.min_price = $('#min-price').val();
+                        d.max_price = $('#max-price').val();
                     },
                 },
                 columns: [{
@@ -135,8 +149,16 @@
                 }
             });
 
-            $('#showTrashed').change(function() {
+            $('.select2').select2({
+                width: '100%',
+            });
+            $('#min-price, #max-price').on('input', function() {
                 table.draw();
+            });
+
+            $('#showTrashed, #brand_id').on('change', function() {
+                table.draw();
+                console.log($('#brand_id').val());
             });
 
             window.handleAction = function(itemId, actionType) {
@@ -151,7 +173,6 @@
                         method = 'POST';
                         successMessage = "Item has been restored.";
                         break;
-
                     case 'permanentDelete':
                         title = "Are you sure?";
                         text = "This action will permanently delete the item. You won't be able to revert it!";
@@ -166,7 +187,7 @@
                         icon = "warning";
                         url = '{{ route('item.destroy', '') }}';
                         method = 'GET';
-                        successMessage = "Item has been moved o trashed.";
+                        successMessage = "Item has been moved to trashed.";
                         break;
                 }
 

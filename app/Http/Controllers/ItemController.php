@@ -16,11 +16,13 @@ class ItemController extends Controller
      */
     public function index()
     {
+        $brands = Brand::all();
         $pageData = [
             'title' => 'All Items',
             'pageName' => 'All Items',
             'breadcrumb' => '<li class="breadcrumb-item"><a href="' . route('dashboard') . '">Dashboard</a></li>
                               <li class="breadcrumb-item active">All Items</li>',
+            'brands' => $brands,
 
         ];
 
@@ -78,7 +80,16 @@ class ItemController extends Controller
         if ($request->has('show_trashed') && $request->show_trashed == 'true') {
             $data->onlyTrashed();
         }
-
+        if ($request->has('min_price') && !empty($request->min_price)) {
+            $data->where('amount', '>=', $request->min_price);
+        }
+        if ($request->has('max_price') && !empty($request->max_price)) {
+            $data->where('amount', '<=', $request->max_price);
+        }
+        if ($request->has('brand_id') && !empty($request->brand_id)) {
+            $data->whereIn('brand_id', $request->brand_id);
+        }
+        $data->orderBy('id', 'asc');
         return DataTables::of($data)
             ->addColumn('id', function ($row) {
                 return $row->id;
@@ -138,17 +149,17 @@ class ItemController extends Controller
                         </a>';
                 } else {
                     return '
-                        <a href="#" class="btn btn-sm btn-info" title="Edit Item" data-url="' . route('item.edit', [$row->id]) . '" data-size="md" data-ajax-popup="true"
+                        <a href="#"  title="Edit Item" data-url="' . route('item.edit', [$row->id]) . '" data-size="md" data-ajax-popup="true"
                         data-title="' . __('Edit Item') . '" data-bs-toggle="tooltip">
-                            <i class="fa fa-edit text-white"></i>
+                            <i class="fa fa-edit text-info font-15"></i>
                         </a>
                          &nbsp;&nbsp;
-                         <a href="#" class="btn btn-sm btn-success" title="Show History" onclick="itemHistory(' . $row->id . ')"data-bs-toggle="tooltip">
-                            <i class="fas fa-history"></i>
+                         <a href="#" title="Show History" onclick="itemHistory(' . $row->id . ')">
+                            <i class="fas fa-history font-15"></i>
                          </a>
                             &nbsp;&nbsp;
-                        <a href="#" class="btn btn-sm btn-danger" title="Delete" onclick="handleAction(' . $row->id . ', \'delete\')" data-bs-toggle="tooltip">
-                            <i class="fa fa-trash"></i>
+                        <a href="#" title="Delete" onclick="handleAction(' . $row->id . ', \'delete\')" data-bs-toggle="tooltip">
+                            <i class="fa fa-trash text-danger font-25"></i>
                         </a>';
                 }
             })
