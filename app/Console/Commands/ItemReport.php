@@ -6,6 +6,7 @@ use App\Exports\LowStockExport;
 use App\Models\Item;
 use App\Services\EmailService;
 use Illuminate\Http\UploadedFile;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -42,7 +43,7 @@ class ItemReport extends Command
         $items = Item::where('quantity', '<=', $threshold)->get();
         $export = new LowStockExport($items);
 
-        $timestamp = now()->format('Ymd_His');
+        $timestamp = now()->format('d-m-Y_H-i');
         $fileName = "reports/low_stock_report_{$timestamp}.xlsx";
         $filePath = storage_path("app/public/{$fileName}");
 
