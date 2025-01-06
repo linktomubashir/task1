@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\SoldItem;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ItemRevenueController extends Controller
@@ -43,7 +44,7 @@ class ItemRevenueController extends Controller
             ->groupBy('brand_id')
             ->map(fn($group) => [
                 'brand_name' => $group->first()->brand->name,
-                'total_revenue' => $group->sum('total_amount'), nb,
+                'total_revenue' => $group->sum('total_amount'),
             ]);
         return response()->json($items);
     }

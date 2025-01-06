@@ -28,6 +28,7 @@
             <table class="table table-striped mt-3" id="revenueTable" style="display: none;">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Brand Name</th>
                         <th>Total Amount</th>
                     </tr>
@@ -54,21 +55,22 @@
                 method: 'GET',
                 data: formData,
                 success: function(response) {
-                    $('#revenueTable tbody').empty();
+                    let tableBody =  $('#revenueTable tbody').empty();
+                    console.log(response);
                     
-                    if(response && response.length > 0) {
+                    if (!$.isEmptyObject(response)) {
                         $('#revenueTable').show();
-console.log(response);
-                        response.forEach(function(item) {
-                            var row = '<tr>';
-                            row += '<td>' + item.brand_name + '</td>';
-                            row += '<td>' + item.total_revenue  + '</td>';
-                            row += '</tr>';
-                            $('#revenueTable tbody').append(row);
+                        $.each(response, function(index, item) {
+                            tableBody.append(`
+                                <tr>
+                                    <td>${index}</td>
+                                    <td>${item.brand_name}</td>
+                                    <td>${item.total_revenue}</td>
+                                </tr>
+                            `);
                         });
                     } else {
-                        $('#revenueTable tbody').append('<tr><td colspan="2" class="text-center">No data available for the selected criteria.</td></tr>');
-                        $('#revenueTable').hide();
+                        tableBody.append('<tr><td colspan="3" style="text-align: center;">No data available</td></tr>');
                     }
                 },
                 error: function(xhr, status, error) {

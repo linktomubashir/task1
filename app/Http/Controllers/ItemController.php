@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Item;
 use App\Models\Models;
+use App\Models\SoldItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -257,5 +258,22 @@ class ItemController extends Controller
         } else {
             return response()->json(['error' => 'Brand ID is required'], 400);
         }
+    }
+    public function topItems()
+    {
+        $soldItems = SoldItem::topSellingItem();
+        $brands = Brand::whereIn('id', $soldItems->keys())->get();
+    
+        $pageData = [
+            'title' => 'Top Items',
+            'pageName' => 'Top Items',
+            'breadcrumb' => '<li class="breadcrumb-item"><a href="' . route('dashboard') . '">Dashboard</a></li>
+                              <li class="breadcrumb-item active">Top Items</li>',
+            'soldItems' => $soldItems,
+            'brands' => $brands,
+            
+            
+        ];
+        return view('pages.item.top-items')->with($pageData);
     }
 }
