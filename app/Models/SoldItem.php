@@ -14,7 +14,7 @@ class SoldItem extends Model
         'coustomer_email',
         'item_id',
         'quantity',
-        'brand',
+        'brand_id',
         'original_price',
         'discount_price',
         'total_amount',
@@ -27,6 +27,16 @@ class SoldItem extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function topSellingItem()
+    {
+        $topItems = $this->with('brand') ->get()->groupBy('brand_id') 
+        ->map(function ($items) {
+            return $items->sortByDesc('quantity') 
+                ->take(5); 
+        });
+        return $topItems;
     }
 
 }

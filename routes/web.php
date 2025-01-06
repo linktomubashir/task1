@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('item-revenue')->name('item-revenue.')->group(function () {
         Route::get('/show', [ItemRevenueController::class, 'show'])->name('show');
     });
+    Route::get('topSellingItems', [ItemRevenueController::class, 'topSellingItems'])->name('topSellingItems');
 });
 
 
