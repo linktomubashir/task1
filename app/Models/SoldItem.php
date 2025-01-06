@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class SoldItem extends Model
 {
@@ -29,14 +30,19 @@ class SoldItem extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function topSellingItem()
+    public function scopeTopSellingItem(Builder $query)
     {
-        $topItems = $this->with('brand') ->get()->groupBy('brand_id') 
-        ->map(function ($items) {
-            return $items->sortByDesc('quantity') 
-                ->take(5); 
-        });
-        return $topItems;
+        return $query->with(['brand', 'item'])->get()
+            ->groupBy('brand_id')
+            ->map(function ($items) {
+                $items = $items->groupBy('item_id')->map(function ($itemGroup) {
+                    return [
+                        'item_id' => $itemGroup->first()->item_id,
+                        'total_quantity' => $itemGroup->sum('quantity'),
+                        'item_name' => $itemGroup->first()->item->name
+                    ];
+                });
+                return $items->sortByDesc('total_quantity')->take(5)->values();
+            });
     }
-
 }

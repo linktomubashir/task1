@@ -12,8 +12,7 @@
         <div class="col-md-12 mt-3">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <p class="mb-0">Item page</p>
-
+                    <a href="{{route('item.top.items')}}" class="btn btn-secondary btn-sm">Top Selling Items</a>
                     <div class="d-flex align-items-end ms-auto">
                         <div class="form-check form-switch me-3">
                             <label class="form-check-label" for="showTrashed">Show Trashed items</label>

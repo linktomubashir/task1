@@ -48,9 +48,4 @@ class ItemRevenueController extends Controller
             ]);
         return response()->json($items);
     }
-    public function topSellingItems()
-    {
-        $topItemsByBrand = (new SoldItem())->topSellingItem();
-                  return response()->json($topItemsByBrand);
-    }
 }

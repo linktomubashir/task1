@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('item')->name('item.')->group(function () {
         Route::get('/search', [ItemController::class, 'show'])->name('show');
         Route::get('/search/model', [ItemController::class, 'searchModel'])->name('search_model');
+        Route::get('/top/items', [ItemController::class, 'topItems'])->name('top.items');
         Route::get('/destroy/{id}', [ItemController::class, 'destroy'])->name('destroy');
         Route::post('/restore/{id}', [ItemController::class, 'restore'])->name('restore');
         Route::delete('/forceDelete/{id}', [ItemController::class, 'forceDelete'])->name('forceDelete');
@@ -92,10 +93,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('items-revenue', ItemRevenueController::class);
-    Route::prefix('item-revenue')->name('item-revenue.')->group(function () {
+    Route::prefix('item-report')->name('item-revenue.')->group(function () {
         Route::get('/show', [ItemRevenueController::class, 'show'])->name('show');
     });
-    Route::get('topSellingItems', [ItemRevenueController::class, 'topSellingItems'])->name('topSellingItems');
 });
 
 
