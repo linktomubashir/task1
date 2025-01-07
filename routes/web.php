@@ -8,7 +8,7 @@ use App\Http\Controllers\ModelController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-// use App\Http\Controllers\SMSController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('item-report')->name('item-revenue.')->group(function () {
         Route::get('/show', [ItemRevenueController::class, 'show'])->name('show');
     });
+    Route::resource('audit/logs', AuditLogController::class);
 });
 
 

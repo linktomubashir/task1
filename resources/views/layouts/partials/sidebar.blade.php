@@ -101,8 +101,14 @@
                             </li>
                         </ul>
                     </li>
-                    
+                    <li class="nav-item {{ request()->is('audit/logs') ? 'active menu-open' : '' }}">
+                        <a href="{{ url('audit/logs') }}" class="nav-link">
+                            <i class="nav-icon fas fa-history me-2"></i>
+                            <p>Audit Logs</p>
+                        </a>
+                    </li>
                 @endcan
+                
             </ul>
         </nav>
     </div>

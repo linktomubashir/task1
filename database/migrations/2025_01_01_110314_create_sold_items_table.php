@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->timestamps(); 
 
-            $table->foreign('item_id')->references('id')->on('items')->onDelete(null);
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
         });
     }
 

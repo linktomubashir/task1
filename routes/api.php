@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\PriceHistoryController;
+use App\Http\Controllers\Api\AuditLogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/price-history/{itemId}', [PriceHistoryController::class, 'index']);
+Route::get('/audit/logs', [AuditLogController::class, 'index'])->name('audit.logs');

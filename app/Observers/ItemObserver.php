@@ -3,8 +3,10 @@
 namespace App\Observers;
 
 use App\Models\Item;
+use App\Models\Auditlog;
 use App\Models\PriceHistory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ItemObserver
 {
@@ -14,7 +16,7 @@ class ItemObserver
      */
     public function created(Item $item): void
     {
-        //
+        $this->logAudit('create', $item);
     }
 
     /**
@@ -32,12 +34,18 @@ class ItemObserver
         }
     }
 
+    public function updated(Item $item): void
+    {
+        $this->logAudit('update', $item);
+    }
+
     /**
      * Handle the Item "deleted" event.
      */
     public function deleted(Item $item): void
     {
-        //
+        $this->logAudit('delete', $item);
+
     }
 
     /**
@@ -45,7 +53,7 @@ class ItemObserver
      */
     public function restored(Item $item): void
     {
-        //
+        $this->logAudit('restore', $item);
     }
 
     /**
@@ -53,6 +61,17 @@ class ItemObserver
      */
     public function forceDeleted(Item $item): void
     {
-        //
+        $this->logAudit('forceDelete', $item);
+    }
+    public function logAudit($action,$model)
+    {
+        AuditLog::create([
+            'action' => $action,
+            'model_type' => get_class($model) ?? 'model',
+            'model_id' => $model->id,
+            'user_id' => Auth::id(),
+            'changes' => json_encode($model->getChanges()),
+            'performed_at' => now(),
+        ]);
     }
 }

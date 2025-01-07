@@ -39,7 +39,7 @@ class SoldItem extends Model
                     return [
                         'item_id' => $itemGroup->first()->item_id,
                         'total_quantity' => $itemGroup->sum('quantity'),
-                        'item_name' => $itemGroup->first()->item->name
+                        'item_name' => $itemGroup->first()->item->name ?? 'N/A'
                     ];
                 });
                 return $items->sortByDesc('total_quantity')->take(5)->values();
