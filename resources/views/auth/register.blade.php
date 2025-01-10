@@ -13,7 +13,7 @@
             </div>
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Create your account</p>
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register.store') }}">
                     @csrf
 
                     <!-- Name -->
@@ -26,17 +26,6 @@
                         <x-input-error :messages="$errors->get('name')" class="mt-2 text-danger" />
                     </div>
 
-                    <!-- Email Address -->
-                    <div class="mt-4">
-                        <div class="input-group">
-                            <input type="email" id="email" class="form-control" placeholder="Email" name="email"
-                                :value="old('email')" required autocomplete="username">
-                            <div class="input-group-text"> <span class="bi bi-envelope"></span> </div>
-                        </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-danger" />
-                    </div>
-
-                    <!-- Password -->
                     <div class="mt-4">
                         <div class="input-group">
                             <input type="password" id="password" name="password" class="form-control" 

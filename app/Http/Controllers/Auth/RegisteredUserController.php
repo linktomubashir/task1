@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+use App\Events\EmailVerificationCode;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -25,6 +27,39 @@ class RegisteredUserController extends Controller
         ];
 
         return view('pages.user.index')->with($pageData);
+    }
+    public function verificationForm()
+    {
+        return view('auth.email-verify');
+    }
+    public function sendVerificationCode(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255|unique:users,email',
+        ]);
+        $email = $validated['email'];
+        $verificationCode = rand(100000, 999999);
+
+        session(['email' => $email, 'verification_code' => $verificationCode]);
+        $emailSent =  event(new EmailVerificationCode($email, $verificationCode));
+
+        return response()->json(['success' => true, 'message' => 'Verification code sent successfully.',]);
+    }
+
+    public function verifyEmailCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|numeric',
+        ]);
+
+        $inputCode = $request->input('code');
+        $sessionCode = session('verification_code');
+
+        if ($inputCode == $sessionCode) {
+            return redirect()->route('register.form')->with('message', 'Email verified successfully!');
+        } else {
+            return redirect()->back()->withErrors(['code' => 'The verification code is incorrect.']);
+        }
     }
 
     /**
@@ -44,20 +79,18 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+        $email = session('email');
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $email,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
+        session()->forget(['email', 'verification_code']);
 
-        // Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::HOME)->with('success', 'Account Created SuccessFully!');
     }
 }

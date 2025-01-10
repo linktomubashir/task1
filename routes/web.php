@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/forceDelete/{id}', [ModelController::class, 'forceDelete'])->name('forceDelete');
     });
 
-// Brand
+    // Brand
     Route::resource('brands', BrandController::class);
     Route::prefix('brands')->name('brands.')->group(function () {
         Route::get('/show', [BrandController::class, 'show'])->name('show');
@@ -82,6 +82,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('/show', [UserController::class, 'show'])->name('show');
             Route::get('/destroy/{id}', [UserController::class, 'destroy'])->name('destroy');
+            Route::post('/restore/{id}', [UserController::class, 'restore'])->name('restore');
+            Route::delete('/forceDelete/{id}', [UserController::class, 'forceDelete'])->name('forceDelete');
         });
     });
     Route::resource('services', ServiceController::class);

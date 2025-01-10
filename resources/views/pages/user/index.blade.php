@@ -14,6 +14,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <p class="mb-0">Users</p>
                     <div class="d-flex align-items-end ms-auto">
+                        <div class="form-check form-switch me-3">
+                            <label class="form-check-label" for="showTrashed">Show Trashed users</label>
+                            <input class="form-check-input" type="checkbox" id="showTrashed" />
+                        </div>
                         <a class="btn btn-sm btn-primary" title="Creat Models" data-url="{{ route('users.create') }}"
                             data-size="lg" data-ajax-popup="true" data-title="{{ __('Create New Model') }}"
                             data-bs-toggle="tooltip">
@@ -101,11 +105,27 @@
                 switch (actionType) {
                     case 'delete':
                         title = "Are you sure?";
-                        text = "This action will move the item to trash.";
+                        text = "This action will move the user to trash.";
                         icon = "warning";
                         url = '{{ route('user.destroy', '') }}';
                         method = 'GET';
-                        successMessage = "Item has been moved to trash..";
+                        successMessage = "User has been moved to trash..";
+                        break;
+                        case 'restore':
+                        title = "Are you sure?";
+                        text = "You want to restore this user!";
+                        icon = "info";
+                        url = '{{ route('user.restore', '') }}';
+                        method = 'POST';
+                        successMessage = "User has been restored.";
+                        break;
+                    case 'permanentDelete':
+                        title = "Are you sure?";
+                        text = "This action will permanently delete the user. You won't be able to revert it!";
+                        icon = "warning";
+                        url = '{{ route('user.forceDelete', '') }}';
+                        method = 'DELETE';
+                        successMessage = "User has been permanently deleted.";
                         break;
                 }
 
