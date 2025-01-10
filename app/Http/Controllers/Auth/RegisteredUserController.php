@@ -101,7 +101,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-        session()->forget(['email', 'verification_link']);
+        session()->forget(['email', 'verification_token']);
 
         return redirect(RouteServiceProvider::HOME)->with('success', 'Account Created SuccessFully!');
     }
