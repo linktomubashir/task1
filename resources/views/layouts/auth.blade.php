@@ -27,10 +27,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
-            if (session('success')) {
+            if ("{{session('success')}}") {
                 toastr.success("{{ session('success') }}", "Success");
 
-            } else if (session('error')) {
+            } else if ("{{ session('error')}}") {
                 toastr.error("{{ session('error') }}", "Error");
             }
         });

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use App\Events\EmailVerificationCode;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -38,27 +39,38 @@ class RegisteredUserController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
         ]);
         $email = $validated['email'];
-        $verificationCode = rand(100000, 999999);
+        // $verificationCode = rand(100000, 999999);
 
-        session(['email' => $email, 'verification_code' => $verificationCode]);
-        $emailSent =  event(new EmailVerificationCode($email, $verificationCode));
+        // session(['email' => $email, 'verification_code' => $verificationCode]);
+        // $emailSent =  event(new EmailVerificationCode($email, $verificationCode));
+        
+        // verify email via link
+        $verificationToken = \Str::random(64); 
 
+        session(['email' => $email, 'verification_token' => $verificationToken]);
+        $verificationLink = route('register.verify.email', ['token' => $verificationToken]);
+    
+        // Email Event Dispatch
+        event(new EmailVerificationCode($email, $verificationLink));
         return response()->json(['success' => true, 'message' => 'Verification code sent successfully.',]);
     }
 
-    public function verifyEmailCode(Request $request)
+    public function verifyEmail($token)
     {
-        $request->validate([
-            'code' => 'required|numeric',
-        ]);
+        // $request->validate([
+        //     'code' => 'required|numeric',
+        // ]);
+        // $inputCode = $request->input('code');
+        // $sessionCode = session('verification_code');
 
-        $inputCode = $request->input('code');
-        $sessionCode = session('verification_code');
+        $sessionToken = session('verification_token');
+        // $email = session('email');
+    
+        if ($sessionToken == $token) {
+            return redirect()->route('register.form')->with('success', 'Email verified successfully!');
 
-        if ($inputCode == $sessionCode) {
-            return redirect()->route('register.form')->with('message', 'Email verified successfully!');
         } else {
-            return redirect()->back()->withErrors(['code' => 'The verification code is incorrect.']);
+            return view('auth.email-verify')->with('error', 'Invalid or expired verification link.');
         }
     }
 
@@ -89,7 +101,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-        session()->forget(['email', 'verification_code']);
+        session()->forget(['email', 'verification_link']);
 
         return redirect(RouteServiceProvider::HOME)->with('success', 'Account Created SuccessFully!');
     }

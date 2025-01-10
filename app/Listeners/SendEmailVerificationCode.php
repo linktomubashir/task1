@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\EmailVerificationCode;
-use App\Services\EmailService;
+use App\Services\VerifyEmailService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -12,9 +12,9 @@ class SendEmailVerificationCode
     /**
      * Create the event listener.
      */
-    public function __construct(EmailService $emailService)
+    public function __construct(VerifyEmailService $verifyEmailService)
     {
-        $this->emailService = $emailService;
+        $this->verifyEmailService = $verifyEmailService;
     }
 
     /**
@@ -23,12 +23,16 @@ class SendEmailVerificationCode
     public function handle(EmailVerificationCode $event): void
     {
         $email = $event->email;
-        $verificationCode = $event->verificationCode;
+        $verificationLink = $event->verificationLink;
+        $data = [
+            'subject' => 'Verify Email Address',
+            'verificationUrl' => $verificationLink,
+        ];
 
-        $emailSent = $this->emailService->sendEmail(
+        $emailSent = $this->verifyEmailService->sendEmail(
             $email,
             "Verify Email Address",
-            ("Your email verification code is: $verificationCode"),
+            $data,
             null,
         );
         if(!$emailSent){

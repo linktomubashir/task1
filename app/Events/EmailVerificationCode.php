@@ -14,14 +14,14 @@ class EmailVerificationCode
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $email;
-    public $verificationCode;
+    public $verificationLink;
     /**
      * Create a new event instance.
      */
-    public function __construct($email, $verificationCode)
+    public function __construct($email, $verificationLink)
     {
         $this->email = $email;
-        $this->verificationCode = $verificationCode;
+        $this->verificationLink = $verificationLink;
     }
 
     /**

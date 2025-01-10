@@ -18,9 +18,18 @@
                     <p class="text-success">{{ session('message') }}</p>
                 @endif
 
-                @if (!session('verification_code'))
-                    <form id="verificationForm" action="#">
-                        @csrf
+                <form id="verificationForm" action="#">
+                    @csrf
+                    @if (session('verification_token'))
+                        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert">
+                            <div>
+                                We have sent an email to <strong>{{ session('email') }}</strong>. Please check your inbox
+                                for the verification code.
+                            </div>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                        @endif
                         <div>
                             <div class="input-group">
                                 <input type="email" id="email" name="email" class="form-control"
@@ -37,17 +46,10 @@
                             </div>
                         </div>
                     </form>
-                @else
-                    <form method="POST" action="{{ route('register.verify.code') }}">
+             
+                    {{-- <form method="POST" action="#">
                         @csrf
-                        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert">
-                            <div>
-                                We have sent an email to <strong>{{ session('email') }}</strong>. Please check your inbox
-                                for the verification code.
-                            </div>
-                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
+                        
                         <div>
                             <div class="input-group">
                                 <input type="text" id="code" name="code" class="form-control"
@@ -64,8 +66,8 @@
                                 <button type="submit" id="verifyBtn" class="btn btn-primary" disabled>Verify Email</button>
                             </div>
                         </div>
-                    </form>
-                @endif
+                    </form> --}}
+                
             </div>
         </div>
     </div>

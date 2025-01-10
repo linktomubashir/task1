@@ -16,7 +16,7 @@ Route::middleware('guest')->group(function () {
     Route::prefix('register')->name('register.')->group(function () {
         Route::get('/', [RegisteredUserController::class, 'verificationForm']);
         Route::get('/send/code', [RegisteredUserController::class, 'sendVerificationCode'])->name('send.code');
-        Route::post('/verify/code', [RegisteredUserController::class, 'verifyEmailCode'])->name('verify.code');
+        Route::get('/verify-email/{token}', [RegisteredUserController::class, 'verifyEmail'])->name('verify.email');
         Route::get('/form', [RegisteredUserController::class, 'create'])->name('form');
         Route::post('/store', [RegisteredUserController::class, 'store'])->name('store');
     });

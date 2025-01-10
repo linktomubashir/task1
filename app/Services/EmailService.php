@@ -12,7 +12,7 @@ class EmailService
     public function sendEmail(string $to, string $subject, string $msg, $attachment = null): bool
     {
         try {
-            Mail::send([], [], function ($mail) use ($to, $subject, $msg, $attachment) {
+            Mail::send('email.template', [], function ($mail) use ($to, $subject, $msg, $attachment) {
                 $mail->from('mubashrhussain41@gmail.com')
                      ->to($to)
                      ->subject($subject)
