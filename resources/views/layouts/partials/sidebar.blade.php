@@ -107,6 +107,12 @@
                             <p>Audit Logs</p>
                         </a>
                     </li>
+                    <li class="nav-item {{ request()->is('support/messages') ? 'active menu-open' : '' }}">
+                        <a href="{{ url('support/messages') }}" class="nav-link">
+                            <i class="nav-icon fas fa-envelope me-2"></i> 
+                            <p>Messages</p>
+                        </a>
+                    </li>                    
                 @endcan
                 
             </ul>

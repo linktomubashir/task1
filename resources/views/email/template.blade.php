@@ -14,20 +14,31 @@
                 <div class="card shadow-sm">
 
                     <div class="card-header bg-primary text-white text-center py-3">
-                        <h1 class="h4">{{ config('app.name') ?? 'Task 1' }}</h1>
-                        <p class="lead">{{ $emailTitle ?? 'Email Verification' }}</p>
+                        {{-- <h1 class="h4">{{ config('app.name') ?? 'Task 1' }}</h1> --}}
+                        <p class="lead">{{ $subject ?? 'Email Notification' }}</p>
                     </div>
 
                     <div class="card-body">
-                        <p class="fs-5">{{ $greeting ?? 'Assalam-o-Alikum !' }}</p>
-                        <p class="mb-4">
-                            Thank you for registering with us! Please verify your email address by clicking the button below:
-                        </p>
-                        <div class="text-center">
-                            <a href="{{ $verificationUrl }}" class="btn btn-success btn-lg">Verify Email</a>
-                        </div>
+                        <p class="fs-5">{{ $greeting ?? 'Hello!' }}</p>
+                        
+                      
+                            <p class="fs-5">{!! $msg ?? 'This is a dynamic message for the email' !!}</p> <!-- Dynamic message content -->
+                      
+
+                        {{-- <p class="mb-4">
+                            {!! $messageBody ?? 'We have important updates for you.' !!}
+                        </p> --}}
+
+                        {{-- @isset($actionUrl)
+                            <div class="text-center">
+                                <a href="{{ $actionUrl }}" class="btn btn-success btn-lg">
+                                    {{ $actionText ?? 'Take Action' }}
+                                </a>
+                            </div>
+                        @endisset --}}
+
                         <p class="mt-4 text-muted">
-                            If you did not register for an account, please ignore this email.
+                            If you did not request this action, please ignore this email.
                         </p>
                     </div>
 

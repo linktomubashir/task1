@@ -14,6 +14,7 @@
         "maatwebsite/excel": "^3.1",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-support-bubble": "^1.8",
         "stripe/stripe-php": "^16.4",
         "twilio/sdk": "^8.3",
         "yajra/laravel-datatables-oracle": "^10.11"

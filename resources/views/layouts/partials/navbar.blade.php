@@ -1,4 +1,4 @@
-<nav class="app-header navbar navbar-expand bg-body"> <!--begin::Container-->
+<nav class="app-header navbar z-5 navbar-expand bg-body"> <!--begin::Container-->
     <div class="container-fluid"> <!--begin::Start Navbar Links-->
         <ul class="navbar-nav">
             <li class="nav-item"> 

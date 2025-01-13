@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +100,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/show', [ItemRevenueController::class, 'show'])->name('show');
     });
     Route::resource('audit/logs', AuditLogController::class);
+
+    // Route::middleware(['can:edit user'])->group(function () {
+
+    Route::resource('support/messages', SupportController::class);
+        Route::get('support/message/show', [SupportController::class, 'show'])->name('support.messages.show');
+       
+
+    // });
 });
 
 

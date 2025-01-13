@@ -7,6 +7,10 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use App\Events\SendEmail;
 use App\Listeners\SendEmailListener;
 use App\Events\EmailVerificationCode;
+use App\Events\SupportRequestEvent;
+use App\Events\ReplyEmailEvent;
+use App\Listeners\SendSupportRequestNotification;
+use App\Listeners\ReplyEmailListener;
 use App\Listeners\SendEmailVerificationCode;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
@@ -27,6 +31,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         EmailVerificationCode::class => [
             SendEmailVerificationCode::class,
+        ],
+        SupportRequestEvent::class => [
+            SendSupportRequestNotification::class,
+        ],
+       ReplyEmailEvent::class => [
+            ReplyEmailListener::class,
         ],
     ];
 

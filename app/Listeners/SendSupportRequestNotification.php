@@ -2,46 +2,45 @@
 
 namespace App\Listeners;
 
-use App\Events\EmailVerificationCode;
+use App\Events\SupportRequestEvent;
 use App\Services\VerifyEmailService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendEmailVerificationCode
+class SendSupportRequestNotification
 {
     /**
      * Create the event listener.
      */
-    public function __construct(VerifyEmailService $verifyEmailService)
+    public function __construct(VerifyEmailService $EmailService)
     {
-        $this->verifyEmailService = $verifyEmailService;
+        $this->EmailService = $EmailService;
     }
 
     /**
      * Handle the event.
      */
-    public function handle(EmailVerificationCode $event): void
+    public function handle(SupportRequestEvent $event): void
     {
-        $to = $event->email;
+        $from = $event->email;
         $to = config('app.email');
         $subject =  "Task 1";
 
         $template = "email.template";   // this is view like ===> view(email.template); 
-        $verificationLink = $event->verificationLink;
         $data = [
-            'subject' => 'Verify Email Address',
-            '$actionUrl' => $verificationLink,
+            'subject' => $event->subject,
+            'msg' => $event->message,
         ];
 
-        $emailSent = $this->verifyEmailService->sendEmail(
+        $emailSent = $this->EmailService->sendEmail(
             $from,
             $to,
+            null,
             $subject,
+            $template,
             $data,
             null,
         );
-        if(!$emailSent){
-            dd($emailSent);
-        }
+
     }
 }
