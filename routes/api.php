@@ -2,7 +2,11 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\PriceHistoryController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\SupportRequestController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use App\Http\Controllers\Api\AuditLogController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +26,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/price-history/{itemId}', [PriceHistoryController::class, 'index']);
 Route::get('/audit/logs', [AuditLogController::class, 'index'])->name('audit.logs');
-Route::supportBubble();
+
 
 Route::post('/submit-support-request', [SupportRequestController::class, 'store'])->name('support_request.store');
+Route::post('/login', [AuthController::class, 'index']);
+Route::get('/users', [UserController::class, 'create'])->middleware('auth:sanctum');
