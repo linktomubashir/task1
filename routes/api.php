@@ -30,4 +30,4 @@ Route::get('/audit/logs', [AuditLogController::class, 'index'])->name('audit.log
 
 Route::post('/submit-support-request', [SupportRequestController::class, 'store'])->name('support_request.store');
 Route::post('/login', [AuthController::class, 'index']);
-Route::get('/users', [UserController::class, 'create'])->middleware('auth:sanctum');
+Route::get('/users', [AuthController::class, 'create'])->middleware('auth:sanctum');
