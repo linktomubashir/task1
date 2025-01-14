@@ -1,10 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Events\ReplyEmailEvent;
+use App\Models\History;
 use App\Models\SupportRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use yajra\DataTables\DataTables;
 
 class SupportController extends Controller
@@ -15,8 +16,8 @@ class SupportController extends Controller
     public function index()
     {
         $pageData = [
-            'title' => 'Service',
-            'pageName' => 'Service',
+            'title'      => 'Service',
+            'pageName'   => 'Service',
             'breadcrumb' => '<li class="breadcrumb-item"><a href="' . route('dashboard') . '">Dashboard</a></li>
                               <li class="breadcrumb-item active">Service</li>',
         ];
@@ -27,9 +28,9 @@ class SupportController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id)
     {
-        //
+
     }
 
     /**
@@ -76,7 +77,7 @@ class SupportController extends Controller
                 return match ($row->status) {
                     'pending' => '<span class="badge bg-warning">Pending</span>',
                     'answered' => '<span class="badge bg-success">Answered</span>',
-                    default => '<span class="badge bg-secondary">Unknown</span>',
+                    default    => '<span class="badge bg-secondary">Unknown</span>',
                 };
             })
             ->addColumn('reply_message', function ($row) {
@@ -87,6 +88,9 @@ class SupportController extends Controller
             })
             ->addColumn('actions', function ($row) {
                 return '
+                <a href="#" title="View History" data-url="' . route('support.messages.history', [$row->id]) . '" data-size="small" data-ajax-popup="true" data-title="' . __('View Message History') . '" data-bs-toggle="tooltip">
+                  <i class="fas fa-history text-primary font-18"></i>
+                </a>
                 <a href="#" title="Reply" data-url="' . route('messages.edit', [$row->id]) . '" data-size="small" data-ajax-popup="true"
                    data-title="' . __('Reply to Model') . '" data-bs-toggle="tooltip">
                     <i class="fas fa-reply text-success font-18"></i>
@@ -122,12 +126,16 @@ class SupportController extends Controller
             'message' => 'required|string',
         ]);
         $message = $validated['message'];
-
+// dd($support->history);
         $sentReply = event(new ReplyEmailEvent($support, $message));
+
         if ($sentReply) {
             $support->update([
-                'reply_message' => $message,
                 'status' => 'answered',
+            ]);
+            $support->history()->create([
+                'user_id' => Auth::user()->id,
+                'message' => $message,
             ]);
             return redirect()->back()->with('success', 'Replied SuccessFully!');
         } else {
@@ -139,8 +147,14 @@ class SupportController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function history(string $id)
     {
-        //
+        $support = SupportRequest::findOrFail($id);
+        $history = $support->history()->get();
+
+        $data = [
+            'history' => $history,
+        ];
+        return view('pages.support_message.history')->with($data);
     }
 }

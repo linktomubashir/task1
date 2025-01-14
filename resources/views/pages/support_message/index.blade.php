@@ -23,7 +23,7 @@
                                 <th>Subject</th>
                                 <th>Message</th>
                                 <th>Status</th>
-                                <th>Reply Message</th>
+                                {{-- <th>Reply Message</th> --}}
                                 <th>Sent At</th>
                                 <th>Action</th>
                             </tr>
@@ -92,20 +92,20 @@
                         data: 'status',
                         name: 'status'
                     },
-                    {
-                        data: 'reply_message',
-                        name: 'reply_message',
-                        render: function(data, type, row) {
-                            if (data !== null) {
+                    // {
+                    //     data: 'reply_message',
+                    //     name: 'reply_message',
+                    //     render: function(data, type, row) {
+                    //         if (data !== null) {
 
-                                return '<span data-toggle="tooltip" data-placement="top" title="' + data +
-                                    '">' +
-                                    (data.length > 25 ? data.substr(0, 25) + '...' : data) + '</span>';
-                            } else {
-                                return ''; 
-                            }
-                        }
-                    },
+                    //             return '<span data-toggle="tooltip" data-placement="top" title="' + data +
+                    //                 '">' +
+                    //                 (data.length > 25 ? data.substr(0, 25) + '...' : data) + '</span>';
+                    //         } else {
+                    //             return ''; 
+                    //         }
+                    //     }
+                    // },
                     {
                         data: 'created_at',
                         name: 'created_at'

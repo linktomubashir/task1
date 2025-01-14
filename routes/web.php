@@ -104,8 +104,11 @@ Route::middleware('auth')->group(function () {
     // Route::middleware(['can:edit user'])->group(function () {
 
     Route::resource('support/messages', SupportController::class);
-        Route::get('support/message/show', [SupportController::class, 'show'])->name('support.messages.show');
-       
+    Route::prefix('support/message')->name('support.messages.')->group(function () {
+            Route::get('/show', [SupportController::class, 'show'])->name('show');
+            Route::get('/history/{id}', [SupportController::class, 'history'])->name('history');
+           
+    });
 
     // });
 });
