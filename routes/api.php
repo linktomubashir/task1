@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\SupportRequestController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WebhookController;
 use App\Models\User;
 use App\Http\Controllers\Api\AuditLogController;
 use Illuminate\Support\Facades\Route;
@@ -31,3 +32,5 @@ Route::get('/audit/logs', [AuditLogController::class, 'index'])->name('audit.log
 Route::post('/submit-support-request', [SupportRequestController::class, 'store'])->name('support_request.store');
 Route::post('/login', [AuthController::class, 'index']);
 Route::get('/users', [AuthController::class, 'create'])->middleware('auth:sanctum');
+
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);

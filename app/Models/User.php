@@ -1,18 +1,18 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -43,6 +43,26 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
+
+    public function currentSubscription()
+    {
+        $subscription = $this->subscription('default');
+        if($subscription){
+        $price_id     = $subscription->stripe_price;
+        $price        = Price::with('product')->where('stripe_id', $price_id)->first();
+
+        $endDate = Carbon::createFromTimestamp($subscription->asStripeSubscription()->current_period_end);
+        $endDate = $endDate->toFormattedDateString();
+
+        return [
+            'subscription' => $subscription,
+            'price' => $price,
+            'product' => $price->product,
+            'endDate' => $endDate,
+        ];
+    }
+    return '';
+    }
 }

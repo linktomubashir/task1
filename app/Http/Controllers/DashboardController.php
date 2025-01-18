@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product as ModelProduct;
 
 class DashboardController extends Controller
 {
@@ -11,11 +12,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $products = ModelProduct::all();
         $pageData = [
             'title' => 'Dashboard',
             'pageName' => 'Dashboard',
             'breadcrumb' => '<li class="breadcrumb-item active">Dashboard</li>',
-
+            'products' => $products,
         ];
 
         return view('pages.dashboard.index')->with($pageData);

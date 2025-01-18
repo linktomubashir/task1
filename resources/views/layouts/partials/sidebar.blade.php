@@ -112,7 +112,15 @@
                             <i class="nav-icon fas fa-envelope me-2"></i> 
                             <p>Messages</p>
                         </a>
-                    </li>                    
+                    </li>  
+                    
+                    <li class="nav-item {{ request()->is('stripe/product') ? 'active menu-open' : '' }}">
+                        <a href="{{ url('stripe/product') }}" class="nav-link">
+                            <i class="nav-icon fas fa-box me-2"></i> 
+                            <p>Stripe Product</p>
+                        </a>
+                    </li>
+                    
                 @endcan
                 
             </ul>

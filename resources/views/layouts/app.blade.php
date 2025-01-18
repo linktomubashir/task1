@@ -186,6 +186,9 @@
         });
     </script>
     @stack('scripts')
+    @if (session('showSubscriptionModal'))
+    @include('layouts.partials.subscription_plan')
+@endif
 </body>
 
 </html>

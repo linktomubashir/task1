@@ -29,13 +29,13 @@
                             {!! $messageBody ?? 'We have important updates for you.' !!}
                         </p> --}}
 
-                        {{-- @isset($actionUrl)
+                        @isset($actionUrl)
                             <div class="text-center">
                                 <a href="{{ $actionUrl }}" class="btn btn-success btn-lg">
                                     {{ $actionText ?? 'Take Action' }}
                                 </a>
                             </div>
-                        @endisset --}}
+                        @endisset
 
                         <p class="mt-4 text-muted">
                             If you did not request this action, please ignore this email.

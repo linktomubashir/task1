@@ -9,6 +9,8 @@ use App\Listeners\SendEmailListener;
 use App\Events\EmailVerificationCode;
 use App\Events\SupportRequestEvent;
 use App\Events\ReplyEmailEvent;
+use App\Events\SubscriptionReminder;
+use App\Listeners\SubscriptionReminderListener;
 use App\Listeners\SendSupportRequestNotification;
 use App\Listeners\ReplyEmailListener;
 use App\Listeners\SendEmailVerificationCode;
@@ -37,6 +39,9 @@ class EventServiceProvider extends ServiceProvider
         ],
        ReplyEmailEvent::class => [
             ReplyEmailListener::class,
+        ],
+        SubscriptionReminder::class => [
+            SubscriptionReminderListener::class,
         ],
     ];
 

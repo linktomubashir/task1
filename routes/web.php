@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailController;
@@ -8,8 +9,9 @@ use App\Http\Controllers\ModelController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Subscription\ProdutController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -101,17 +103,30 @@ Route::middleware('auth')->group(function () {
     });
     Route::resource('audit/logs', AuditLogController::class);
 
-    // Route::middleware(['can:edit user'])->group(function () {
-
-    Route::resource('support/messages', SupportController::class);
-    Route::prefix('support/message')->name('support.messages.')->group(function () {
+    Route::middleware(['can:edit user'])->group(function () {
+        Route::resource('support/messages', SupportController::class);
+        Route::prefix('support/message')->name('support.messages.')->group(function () {
             Route::get('/show', [SupportController::class, 'show'])->name('show');
             Route::get('/history/{id}', [SupportController::class, 'history'])->name('history');
-           
+
+        });
     });
 
-    // });
-});
+    Route::get('/subscribe', [SubscriptionController::class, 'index'])->name('subscribe.index');
+    Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe.store');
+    Route::post('/store', [SubscriptionController::class, 'store'])->name('stripe_products.store');
+    Route::get('/subscribe/show', [SubscriptionController::class, 'show'])->name('subscribe.plan.show');
+    Route::get('/cancel', [SubscriptionController::class, 'cancel'])->name('subscribe.cancel');
+    Route::post('/resume', [SubscriptionController::class, 'resume'])->name('subscribe.update');
 
+    Route::middleware(['can:edit user'])->group(function () {
+        Route::resource('stripe/product', ProdutController::class);
+        Route::prefix('stripe/products')->name('products.')->group(function () {
+            Route::get('/show', [ProdutController::class, 'show'])->name('show');
+            Route::get('/destroy/{id}', [ProdutController::class, 'destroy'])->name('destroy');
+            Route::get('/restore/{id}', [ProdutController::class, 'restore'])->name('restore');
+        });
+    });
+});
 
 require __DIR__ . '/auth.php';
