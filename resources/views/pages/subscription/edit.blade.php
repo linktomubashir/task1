@@ -46,7 +46,7 @@
     </div>
 
     <div class="d-flex justify-content-end mt-4">
-        <button class="btn btn-warning me-3 rounded-3 action-btn" data-action="pause">
+        {{-- <button class="btn btn-warning me-3 rounded-3 action-btn" data-action="pause">
             <i class="bi bi-pause-circle me-2"></i> Pause 
         </button>
     
@@ -57,7 +57,7 @@
         <button  class="btn btn-danger me-3 rounded-3 action-btn" data-action="delete">
             <i class="bi bi-trash me-2"></i> Delete 
         </button>
-    
+     --}}
         <a href="{{route('subscribe.plan.show')}}"  class="btn btn-info rounded-3">
             <i class="fas fa-arrows-alt-v me-2"></i> Upgrade/Downgrade
         </a>
@@ -77,7 +77,7 @@
             },
             success: function(response) {
                 toastr.success('Action ' + action + ' completed successfully!');
-                location.reload();
+                // location.reload();
             },
             error: function(xhr, status, error) {
                 console.error(error);
