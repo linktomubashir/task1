@@ -29,7 +29,6 @@ class SendSubscriptionExpirationReminder extends Command
      */
     public function handle(): void
     {
-        $date = Carbon::now()->addDays(3);
         $users = User::all();
         foreach ($users as $user) {
             try {
@@ -39,7 +38,9 @@ class SendSubscriptionExpirationReminder extends Command
                     $endDate = Carbon::createFromTimestamp($subscription->asStripeSubscription()->current_period_end);
         
                     $this->info("Subscription End Date: " . $endDate);
-                    if ($endDate <= $date) {
+                    $date = $endDate->copy()->subDays(3);
+
+                    if ($date <= now() ) {
                         event(new SubscriptionReminder($user, $endDate));
                         $this->info("Event dispatched for user: " . $user->name);
                     }
