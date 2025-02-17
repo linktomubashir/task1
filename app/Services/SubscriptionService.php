@@ -41,11 +41,11 @@ class SubscriptionService
             }
         } elseif ($action == 'pause') {
             if ($subscription->active()) {
-                $subscription->pause();
+                $subscription->cancel();
             }
         } elseif($action == 'cancel'){
             if ($subscription) {
-                $subscription->cancel();
+                $subscription->cancelNow();
             }
         }
     }
